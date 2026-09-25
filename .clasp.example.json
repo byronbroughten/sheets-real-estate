@@ -1,0 +1,9 @@
+{
+  "scriptId": "<your Apps Script project's ID>",
+  "rootDir": "",
+  "projectId": "<your GCP project's ID>",
+  "scriptExtensions": [".js", ".gs"],
+  "htmlExtensions": [".html"],
+  "jsonExtensions": [".json"],
+  "filePushOrder": []
+}
