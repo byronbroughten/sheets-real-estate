@@ -16,7 +16,7 @@ It builds only inside an npm workspace beside the framework: it depends on `@byr
 
 ## Commands
 
-Run from the workspace root; each names the real-estate spreadsheet with `app:`.
+Run from the root of a workspace that clones this repo into `packages/real-estate` (the `app:*` aliases live in that root's `package.json`); each names the real-estate spreadsheet with `app:`.
 
 | Command | Does |
 | --- | --- |

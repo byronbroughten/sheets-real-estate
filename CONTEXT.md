@@ -9,7 +9,7 @@ A Google Sheets spreadsheet for managing rental properties that a person operate
 ### Units
 
 **Unit standard name**:
-A unit described by building type and bedroom count, as "Duplex-2BR". It is for comparing rents between units, not for addressing one. The unit's **name** is the address, as "730 Western, Unit 2", and sits in the unit sheet's [Name column](https://github.com/byronbroughten/sheets-framework/blob/master/CONTEXT.md#columns).
+A unit described by building type and bedroom count, as "Duplex-2BR". It is for comparing rents between units, not for addressing one. The unit's **name** is the address, as "123 Example St, Unit 2", and sits in the unit sheet's [Name column](https://github.com/byronbroughten/sheets-framework/blob/master/CONTEXT.md#columns).
 _Avoid_: standard name, unit type
 
 ### The occupancy ledger
