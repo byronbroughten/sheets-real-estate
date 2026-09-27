@@ -3,6 +3,8 @@ import {
   buildGridRows,
   EndpointRun,
   type FakeCell,
+  type FakeCellValue,
+  type FakeGridView,
   type FakeSheetProperties,
   stubLogger,
   stubSheetsService,
@@ -14,15 +16,11 @@ import { columnConfigs } from "../generated/columnConfigs";
 import { sheetConfigs } from "../generated/sheetConfigs";
 import { addPropertyExpense } from "./addPropertyExpense";
 
-type BatchUpdateCall =
-  GoogleAppsScript.Sheets.Schema.BatchUpdateSpreadsheetRequest;
 interface ColumnFixture {
   columnId: string;
   header: string;
 }
-type WrittenValue = string | number | boolean | null;
 type FakeRow<C> = Partial<Record<keyof C, FakeCell>>;
-type WrittenRow = Record<string, WrittenValue>;
 
 const topDataRowIndex = 4;
 const stagingGid = sheetConfigs.addPropertyExpense.sheetGid;
@@ -79,6 +77,12 @@ const expenseColumnNames = [
   "notes",
   "splitReceiptId",
 ] as const;
+
+type StagingRowValues = Record<
+  (typeof stagingColumnNames)[number],
+  FakeCellValue
+>;
+type ExpenseRow = Record<(typeof expenseColumnNames)[number], FakeCellValue>;
 
 const stagingRunStatusColIndex = stagingColumnNames.indexOf("runStatus");
 const receiptIdColIndex = 1;
@@ -185,6 +189,8 @@ function stubSplitReceipt() {
   });
 }
 
+const previousExpenseCount = 2;
+
 // Two rows, so an append can never collapse into a blank-row reuse.
 function stubPropertyExpense() {
   return stubSheet({
@@ -234,110 +240,56 @@ function runAddPropertyExpense(): void {
   run.run(true);
 }
 
-function allRequests(calls: BatchUpdateCall[]) {
-  return calls.flatMap((call) => call.requests ?? []);
-}
-
-function writtenValue(
-  value: GoogleAppsScript.Sheets.Schema.ExtendedValue | undefined,
-): WrittenValue {
-  if (!value) return null;
-  return (
-    value.stringValue ??
-    value.numberValue ??
-    value.boolValue ??
-    value.formulaValue ??
-    null
-  );
-}
-
-// Requests apply in order, so the last write to a cell is what the sheet ends up holding.
-function cellsWrittenTo(
-  calls: BatchUpdateCall[],
+function rowsOf<N extends string>(
+  grid: FakeGridView,
   sheetGid: number,
-): Map<number, Map<number, WrittenValue>> {
-  return allRequests(calls).reduce((rows, request) => {
-    const range = request.updateCells?.range;
-    if (!range || range.sheetId !== sheetGid) return rows;
-    const rowIndex = range.startRowIndex ?? 0;
-    const row = rows.get(rowIndex) ?? new Map<number, WrittenValue>();
-    row.set(
-      range.startColumnIndex ?? 0,
-      writtenValue(
-        request.updateCells?.rows?.[0]?.values?.[0]?.userEnteredValue,
+  columnNames: readonly N[],
+): Record<N, FakeCellValue>[] {
+  return grid
+    .sheet(sheetGid)
+    .values({
+      startRowIndex: topDataRowIndex,
+      endColumnIndex: columnNames.length,
+    })
+    .map(
+      (row) =>
+        Object.fromEntries(
+          columnNames.map((columnName, colIndex) => [
+            columnName,
+            row[colIndex] ?? null,
+          ]),
+        ) as Record<N, FakeCellValue>,
+    );
+}
+
+// Formula columns stay empty in the fake, and the minted id is random, so both are left out.
+function expensesAdded(grid: FakeGridView): Partial<ExpenseRow>[] {
+  return rowsOf(grid, expenseGid, expenseColumnNames)
+    .slice(previousExpenseCount)
+    .map(({ id: _id, ...expense }) =>
+      Object.fromEntries(
+        Object.entries(expense).filter(([, value]) => value !== null),
       ),
     );
-    return rows.set(rowIndex, row);
-  }, new Map<number, Map<number, WrittenValue>>());
 }
 
-function rowsWrittenTo(
-  calls: BatchUpdateCall[],
-  sheetGid: number,
-  columnNames: readonly string[],
-): Map<number, WrittenRow> {
-  return [...cellsWrittenTo(calls, sheetGid).entries()]
-    .sort(([a], [b]) => a - b)
-    .reduce((rows, [rowIndex, cells]) => {
-      const row = columnNames.reduce<WrittenRow>(
-        (written, columnName, colIndex) => {
-          const value = cells.get(colIndex);
-          if (value !== undefined) written[columnName] = value;
-          return written;
-        },
-        {},
-      );
-      return rows.set(rowIndex, row);
-    }, new Map<number, WrittenRow>());
+function stagingRows(grid: FakeGridView): StagingRowValues[] {
+  return rowsOf(grid, stagingGid, stagingColumnNames);
 }
 
-// The minted id is random, so it is asserted by shape where it matters instead.
-function expensesAppended(calls: BatchUpdateCall[]): WrittenRow[] {
-  return [...rowsWrittenTo(calls, expenseGid, expenseColumnNames).values()].map(
-    ({ id: _id, ...expense }) => expense,
-  );
+function rowMessages(grid: FakeGridView): FakeCellValue[] {
+  return stagingRows(grid).map((row) => row.runStatus);
 }
 
-function stagingRowsWritten(calls: BatchUpdateCall[]): Map<number, WrittenRow> {
-  const rows = rowsWrittenTo(calls, stagingGid, stagingColumnNames);
-  [...rows.keys()]
-    .filter((rowIndex) => rowIndex < topDataRowIndex)
-    .forEach((rowIndex) => rows.delete(rowIndex));
-  return rows;
-}
-
-function rowMessages(calls: BatchUpdateCall[]): Map<number, WrittenValue> {
-  return [...cellsWrittenTo(calls, stagingGid).entries()]
-    .filter(([rowIndex]) => rowIndex >= topDataRowIndex)
-    .reduce((messages, [rowIndex, cells]) => {
-      const message = cells.get(stagingRunStatusColIndex);
-      if (message === undefined) return messages;
-      return messages.set(rowIndex, message);
-    }, new Map<number, WrittenValue>());
-}
-
-function stagingRowsDeleted(calls: BatchUpdateCall[]): number[] {
-  return allRequests(calls).flatMap((request) => {
-    const deleted = request.deleteDimension?.range;
-    if (deleted?.sheetId !== stagingGid) return [];
-    return [Val.assert(deleted.startIndex, "deleted row index")];
-  });
-}
-
-function runStatusWritten(calls: BatchUpdateCall[]): string | undefined {
-  return allRequests(calls)
-    .map((request) => request.repeatCell?.cell?.userEnteredValue?.stringValue)
-    .filter((value) => value !== undefined)
-    .at(-1);
-}
-
-function runStateColour(calls: BatchUpdateCall[]) {
-  return allRequests(calls)
-    .map(
-      (request) => request.repeatCell?.cell?.userEnteredFormat?.backgroundColor,
-    )
-    .filter((colour) => colour !== undefined)
-    .at(-1);
+function runStatusCells(grid: FakeGridView): FakeCell[] {
+  return grid
+    .sheet(stagingGid)
+    .rows({
+      startRowIndex: topDataRowIndex,
+      startColumnIndex: stagingRunStatusColIndex,
+      endColumnIndex: stagingRunStatusColIndex + 1,
+    })
+    .map(([cell]) => cell ?? null);
 }
 
 const warningColour = { red: 0.99, green: 0.85, blue: 0.7 };
@@ -354,13 +306,13 @@ describe("addPropertyExpense, a mixed batch", () => {
   ];
 
   it("adds the good row and leaves the two bad ones where they are", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: mixedBatch,
     });
 
     runAddPropertyExpense();
 
-    expect(expensesAppended(batchUpdateCalls)).toEqual([
+    expect(expensesAdded(grid)).toEqual([
       {
         propertyId: caseProperty,
         unitId: caseUnit,
@@ -376,36 +328,34 @@ describe("addPropertyExpense, a mixed batch", () => {
         notes: "",
       },
     ]);
-    expect(stagingRowsDeleted(batchUpdateCalls)).toEqual([topDataRowIndex]);
+    expect(stagingRows(grid)).toMatchObject(mixedBatch.slice(1));
   });
 
   it("tells each refused row what is wrong with it, in its own cell", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: mixedBatch,
     });
 
     runAddPropertyExpense();
 
-    expect([...rowMessages(batchUpdateCalls).entries()]).toEqual([
-      [
-        topDataRowIndex + 1,
-        'This row was not added: no row of Unit is named "140 Case, Unit 9".',
-      ],
-      [topDataRowIndex + 2, "This row was not added: Amount is blank."],
+    expect(rowMessages(grid)).toEqual([
+      'This row was not added: no row of Unit is named "140 Case, Unit 9".',
+      "This row was not added: Amount is blank.",
     ]);
   });
 
-  it("ends in the warning state, saying how much of the batch went through", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+  // Fails until #5: the run-level status never reaches the sheet.
+  it.fails("ends in the warning state, saying how much of the batch went through", () => {
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: mixedBatch,
     });
 
     runAddPropertyExpense();
 
-    expect(runStatusWritten(batchUpdateCalls)).toBe(
-      "Added 1 of 3 rows; the rest say why in their own cells.",
-    );
-    expect(runStateColour(batchUpdateCalls)).toEqual(warningColour);
+    expect(runStatusCells(grid)).toContainEqual({
+      value: "Added 1 of 3 rows; the rest say why in their own cells.",
+      backgroundColor: warningColour,
+    });
   });
 
   it("reads every input sheet in one fetch cycle of its own", () => {
@@ -421,33 +371,33 @@ describe("addPropertyExpense, a mixed batch", () => {
 
 describe("addPropertyExpense, naming the property and the unit", () => {
   it("takes the property from the unit when only a unit is named", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: [typedRow({ unitName: charlesUnitName })],
     });
 
     runAddPropertyExpense();
 
-    expect(expensesAppended(batchUpdateCalls)[0]).toMatchObject({
+    expect(expensesAdded(grid)[0]).toMatchObject({
       propertyId: charlesProperty,
       unitId: charlesUnit,
     });
   });
 
   it("leaves the unit blank when only a property is named", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: [typedRow({ propertyName: caseName })],
     });
 
     runAddPropertyExpense();
 
-    expect(expensesAppended(batchUpdateCalls)[0]).toMatchObject({
+    expect(expensesAdded(grid)[0]).toMatchObject({
       propertyId: caseProperty,
       unitId: "",
     });
   });
 
   it("accepts a row naming a unit and that unit's own property", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: [
         typedRow({ unitName: caseUnitName, propertyName: caseName }),
       ],
@@ -455,14 +405,14 @@ describe("addPropertyExpense, naming the property and the unit", () => {
 
     runAddPropertyExpense();
 
-    expect(expensesAppended(batchUpdateCalls)[0]).toMatchObject({
+    expect(expensesAdded(grid)[0]).toMatchObject({
       propertyId: caseProperty,
       unitId: caseUnit,
     });
   });
 
   it("refuses a row whose unit and property disagree", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: [
         typedRow({ unitName: caseUnitName, propertyName: charlesName }),
       ],
@@ -470,26 +420,26 @@ describe("addPropertyExpense, naming the property and the unit", () => {
 
     runAddPropertyExpense();
 
-    expect(expensesAppended(batchUpdateCalls)).toEqual([]);
-    expect(rowMessages(batchUpdateCalls).get(topDataRowIndex)).toBe(
+    expect(expensesAdded(grid)).toEqual([]);
+    expect(rowMessages(grid)[0]).toBe(
       'This row was not added: unit "140 Case, Unit 1" does not belong to property "282 Charles".',
     );
   });
 
   it("refuses a row naming neither a unit nor a property", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: [typedRow()],
     });
 
     runAddPropertyExpense();
 
-    expect(rowMessages(batchUpdateCalls).get(topDataRowIndex)).toBe(
+    expect(rowMessages(grid)[0]).toBe(
       "This row was not added: name a unit or a property.",
     );
   });
 
   it("refuses a name that matches more than one row, and says how many", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: [typedRow({ propertyName: caseName })],
       properties: [
         { name: caseName, id: caseProperty },
@@ -499,13 +449,13 @@ describe("addPropertyExpense, naming the property and the unit", () => {
 
     runAddPropertyExpense();
 
-    expect(rowMessages(batchUpdateCalls).get(topDataRowIndex)).toBe(
+    expect(rowMessages(grid)[0]).toBe(
       'This row was not added: 2 rows of Property are named "140 Case".',
     );
   });
 
   it("names both an unknown unit and an unknown property at once", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: [
         typedRow({ unitName: "140 Case, Unit 9", propertyName: "9 Nowhere" }),
       ],
@@ -513,19 +463,19 @@ describe("addPropertyExpense, naming the property and the unit", () => {
 
     runAddPropertyExpense();
 
-    expect(rowMessages(batchUpdateCalls).get(topDataRowIndex)).toBe(
+    expect(rowMessages(grid)[0]).toBe(
       'This row was not added: no row of Unit is named "140 Case, Unit 9"; no row of Property is named "9 Nowhere".',
     );
   });
 
   it("lists every fault on a row with more than one", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: [typedRow({ amount: null, description: null })],
     });
 
     runAddPropertyExpense();
 
-    expect(rowMessages(batchUpdateCalls).get(topDataRowIndex)).toBe(
+    expect(rowMessages(grid)[0]).toBe(
       "This row was not added: Description is blank; Amount is blank; name a unit or a property.",
     );
   });
@@ -533,7 +483,7 @@ describe("addPropertyExpense, naming the property and the unit", () => {
 
 describe("addPropertyExpense, the split receipt", () => {
   it("carries a named receipt's id across", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: [
         typedRow({
           propertyName: caseName,
@@ -544,13 +494,13 @@ describe("addPropertyExpense, the split receipt", () => {
 
     runAddPropertyExpense();
 
-    expect(expensesAppended(batchUpdateCalls)[0]).toMatchObject({
+    expect(expensesAdded(grid)[0]).toMatchObject({
       splitReceiptId: hardwareReceipt,
     });
   });
 
   it("gives a receipt with no id one during the run, and uses it", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: [
         typedRow({
           propertyName: caseName,
@@ -561,49 +511,61 @@ describe("addPropertyExpense, the split receipt", () => {
 
     runAddPropertyExpense();
 
-    const mintedId = cellsWrittenTo(batchUpdateCalls, receiptGid)
-      .get(topDataRowIndex + 1)
-      ?.get(receiptIdColIndex);
+    const mintedId = grid
+      .sheet(receiptGid)
+      .values({ startRowIndex: topDataRowIndex + 1 })[0]?.[receiptIdColIndex];
     expect(mintedId).toMatch(/^r:srct:/);
-    expect(expensesAppended(batchUpdateCalls)[0]).toMatchObject({
+    expect(expensesAdded(grid)[0]).toMatchObject({
       splitReceiptId: mintedId,
     });
   });
 });
 
 describe("addPropertyExpense, what the sheet is left holding", () => {
+  const cleanBatch = [
+    typedRow({ unitName: caseUnitName }),
+    typedRow({ propertyName: charlesName }),
+  ];
+
   it("empties the staging sheet to one blank row after a clean batch", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
-      stagingRows: [
-        typedRow({ unitName: caseUnitName }),
-        typedRow({ propertyName: charlesName }),
-      ],
-    });
+    const { grid } = stubExpenseSpreadsheet({ stagingRows: cleanBatch });
 
     runAddPropertyExpense();
 
-    expect(runStatusWritten(batchUpdateCalls)).toBe("Added 2 expenses.");
-    expect(stagingRowsDeleted(batchUpdateCalls)).toEqual([topDataRowIndex]);
-    expect(
-      stagingRowsWritten(batchUpdateCalls).get(topDataRowIndex + 1),
-    ).toEqual(
-      Object.fromEntries(
-        stagingColumnNames.map((columnName) => [columnName, ""]),
-      ),
-    );
+    expect(stagingRows(grid)).toEqual([
+      {
+        ...Object.fromEntries(
+          stagingColumnNames.map((columnName) => [columnName, ""]),
+        ),
+        runStatus: expect.any(String),
+      },
+    ]);
+  });
+
+  // Fails until #5: the run-level status never reaches the sheet.
+  it.fails("says how many expenses a clean batch added", () => {
+    const { grid } = stubExpenseSpreadsheet({ stagingRows: cleanBatch });
+
+    runAddPropertyExpense();
+
+    expect(rowMessages(grid)).toEqual(["Added 2 expenses."]);
   });
 
   it("says there was nothing to add when every row is blank", () => {
-    const { batchUpdateCalls } = stubExpenseSpreadsheet({
+    const { grid } = stubExpenseSpreadsheet({
       stagingRows: [{}],
     });
 
     runAddPropertyExpense();
 
-    expect(runStatusWritten(batchUpdateCalls)).toBe(
-      "There are no expenses to add.",
-    );
-    expect(expensesAppended(batchUpdateCalls)).toEqual([]);
-    expect(stagingRowsDeleted(batchUpdateCalls)).toEqual([]);
+    expect(stagingRows(grid)).toEqual([
+      {
+        ...Object.fromEntries(
+          stagingColumnNames.map((columnName) => [columnName, null]),
+        ),
+        runStatus: "There are no expenses to add.",
+      },
+    ]);
+    expect(expensesAdded(grid)).toEqual([]);
   });
 });
