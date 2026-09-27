@@ -6,6 +6,8 @@ import {
   buildGridRows,
   EndpointRun,
   type FakeCell,
+  type FakeCellValue,
+  type FakeGridView,
   type FakeSheetProperties,
   stubLogger,
   stubSheetsService,
@@ -17,18 +19,25 @@ import { columnConfigs } from "../generated/columnConfigs";
 import { sheetConfigs } from "../generated/sheetConfigs";
 import { buildLedger } from "./buildLedger";
 
-type BatchUpdateCall =
-  GoogleAppsScript.Sheets.Schema.BatchUpdateSpreadsheetRequest;
 interface ColumnFixture {
   columnId: string;
   header: string;
 }
-type WrittenValue = string | number | boolean | null;
 type FakeRow<C> = Partial<Record<keyof C, FakeCell>>;
 
 const topDataRowIndex = 4;
 const ledgerGid = sheetConfigs.occupancyLedger.sheetGid;
 const variableGid = sheetConfigs.variable.sheetGid;
+const occupancyGid = sheetConfigs.occupancy.sheetGid;
+const occupancyColumnNames = [
+  "id",
+  "name",
+  "buildLedgerStartDate",
+  "buildLedgerSelect",
+  "buildLedgerTimeLastRan",
+  "buildLedgerRunStatus",
+] as const;
+const runStatusColIndex = occupancyColumnNames.indexOf("buildLedgerRunStatus");
 const ledgerColumnCount = 7;
 const amountOwedColIndex = 5;
 
@@ -86,14 +95,7 @@ function stubOccupancy(
   return stubSheet({
     sheetName: "occupancy",
     config: columnConfigs.occupancy,
-    columnNames: [
-      "id",
-      "name",
-      "buildLedgerStartDate",
-      "buildLedgerSelect",
-      "buildLedgerTimeLastRan",
-      "buildLedgerRunStatus",
-    ],
+    columnNames: occupancyColumnNames,
     dataRows: [
       {
         id: tenant,
@@ -299,6 +301,8 @@ function stubVariable() {
   });
 }
 
+const staleAmountOwed: FakeCell = { value: 1, isFormula: true };
+
 // Three rows of a previous run's ledger, so the rebuild has something to wipe.
 function stubOccupancyLedger() {
   const staleRow = {
@@ -307,7 +311,7 @@ function stubOccupancyLedger() {
     description: "Stale",
     charge: 1,
     payment: "",
-    amountOwed: 1,
+    amountOwed: staleAmountOwed,
     notes: "",
   };
   return stubSheet({
@@ -365,69 +369,32 @@ function runBuildLedger(): void {
   run.run(true);
 }
 
-function allRequests(calls: BatchUpdateCall[]) {
-  return calls.flatMap((call) => call.requests ?? []);
-}
-
-function writtenValue(
-  value: GoogleAppsScript.Sheets.Schema.ExtendedValue | undefined,
-): WrittenValue {
-  if (!value) return null;
-  return (
-    value.stringValue ??
-    value.numberValue ??
-    value.boolValue ??
-    value.formulaValue ??
-    null
-  );
-}
-
-// Requests apply in order, so the last write to a cell is what the sheet ends up holding.
-function cellsWrittenTo(
-  calls: BatchUpdateCall[],
-  sheetGid: number,
-): Map<number, Map<number, WrittenValue>> {
-  return allRequests(calls).reduce((rows, request) => {
-    const range = request.updateCells?.range;
-    if (!range || range.sheetId !== sheetGid) return rows;
-    const rowIndex = range.startRowIndex ?? 0;
-    const row = rows.get(rowIndex) ?? new Map<number, WrittenValue>();
-    row.set(
-      range.startColumnIndex ?? 0,
-      writtenValue(
-        request.updateCells?.rows?.[0]?.values?.[0]?.userEnteredValue,
-      ),
-    );
-    return rows.set(rowIndex, row);
-  }, new Map<number, Map<number, WrittenValue>>());
-}
-
-function ledgerRowsWritten(calls: BatchUpdateCall[]): WrittenValue[][] {
-  return [...cellsWrittenTo(calls, ledgerGid).entries()]
-    .sort(([a], [b]) => a - b)
-    .map(([, row]) =>
-      [...Array(ledgerColumnCount).keys()].map(
-        (colIndex) => row.get(colIndex) ?? null,
-      ),
-    );
-}
-
-function ledgerRowShapeRequests(calls: BatchUpdateCall[]): string[] {
-  return allRequests(calls).flatMap((request) => {
-    if (request.appendCells?.sheetId === ledgerGid) {
-      return [`append ${String(request.appendCells.rows?.length ?? 0)}`];
-    }
-    const deleted = request.deleteDimension?.range;
-    if (deleted?.sheetId !== ledgerGid) return [];
-    return [`delete ${String(deleted.startIndex)}`];
+function ledgerRows(grid: FakeGridView): FakeCell[][] {
+  return grid.sheet(ledgerGid).rows({
+    startRowIndex: topDataRowIndex,
+    endColumnIndex: ledgerColumnCount,
   });
 }
 
-function runStatusWritten(calls: BatchUpdateCall[]): string | undefined {
-  return allRequests(calls)
-    .map((request) => request.repeatCell?.cell?.userEnteredValue?.stringValue)
-    .filter((value) => value !== undefined)
-    .at(-1);
+// Every column but amount owed, the one the build leaves to the sheet's formula.
+function ledgerLines(grid: FakeGridView): FakeCell[][] {
+  return ledgerRows(grid).map((row) =>
+    row.filter((_cell, colIndex) => colIndex !== amountOwedColIndex),
+  );
+}
+
+function variableRow(grid: FakeGridView): FakeCellValue[] {
+  return Val.assert(
+    grid.sheet(variableGid).values({ startRowIndex: topDataRowIndex })[0],
+    "the Variable sheet's data row",
+  );
+}
+
+function runStatus(grid: FakeGridView, occupancyId: string): FakeCellValue {
+  return grid
+    .sheet(occupancyGid)
+    .values({ startRowIndex: topDataRowIndex, endColumnIndex: occupancyColumnNames.length })
+    .find((row) => row[0] === occupancyId)?.[runStatusColIndex] ?? null;
 }
 
 beforeEach(() => {
@@ -440,40 +407,38 @@ describe("buildLedger, the page it writes", () => {
   });
 
   it("writes every kind of line in date order, charge before payment on a shared day", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet();
+    const { grid } = stubLedgerSpreadsheet();
 
     runBuildLedger();
 
-    expect(ledgerRowsWritten(batchUpdateCalls)).toEqual([
-      [dayOne, "Property management", "Rent (base)", 50, "", null, ""],
-      [dayOne, "Property management", "Security deposit", 1100, "", null, ""],
-      [dayOne, "Household", "Payment", "", 1150, null, ""],
+    expect(ledgerLines(grid)).toEqual([
+      [dayOne, "Property management", "Rent (base)", 50, "", ""],
+      [dayOne, "Property management", "Security deposit", 1100, "", ""],
+      [dayOne, "Household", "Payment", "", 1150, ""],
       [
         dayTwo,
         "Property management",
         "Damage, waste, or service",
         220,
         "",
-        null,
         "Plumber cost",
       ],
-      [dayTwo, "Household", "Caretaking", "", 25, null, ""],
-      [dayTwo, "Ramsey County", "Payment", "", 200, null, ""],
-      [dayThree, "Property management", "Forgiveness", -110, "", null, ""],
+      [dayTwo, "Household", "Caretaking", "", 25, ""],
+      [dayTwo, "Ramsey County", "Payment", "", 200, ""],
+      [dayThree, "Property management", "Forgiveness", -110, "", ""],
       [
         dayThree,
         "Security deposit",
         "Damage, waste, or service",
         "",
         110,
-        null,
         "",
       ],
     ]);
   });
 
   it("keeps a household payment's form of payment when the whole amount funds the deposit", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       charges: [
         {
           id: depositCharge,
@@ -500,70 +465,65 @@ describe("buildLedger, the page it writes", () => {
 
     runBuildLedger();
 
-    expect(ledgerRowsWritten(batchUpdateCalls)).toEqual([
-      [dayOne, "Property management", "Security deposit", 1100, "", null, ""],
-      [dayOne, "Household", "Payment", "", 875, null, ""],
+    expect(ledgerLines(grid)).toEqual([
+      [dayOne, "Property management", "Security deposit", 1100, "", ""],
+      [dayOne, "Household", "Payment", "", 875, ""],
     ]);
   });
 
   it("leaves the amount owed column to the sheet's own formula", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet();
+    const { grid } = stubLedgerSpreadsheet();
 
     runBuildLedger();
 
-    expect(
-      ledgerRowsWritten(batchUpdateCalls).map((row) => row[amountOwedColIndex]),
-    ).toEqual([null, null, null, null, null, null, null, null]);
+    expect(ledgerRows(grid).map((row) => row[amountOwedColIndex])).toEqual([
+      staleAmountOwed,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+    ]);
   });
 
   it("wipes the previous ledger down to one row and refills from there", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet();
+    const { grid } = stubLedgerSpreadsheet();
 
     runBuildLedger();
 
-    expect(ledgerRowShapeRequests(batchUpdateCalls)).toEqual([
-      "append 7",
-      "delete 6",
-      "delete 5",
-    ]);
+    const ledger = grid.sheet(ledgerGid);
+    expect(ledgerRows(grid)).toHaveLength(8);
+    expect(ledger.tables[0]?.range?.endRowIndex).toBe(topDataRowIndex + 8);
+    expect(ledger.rowCount).toBe(topDataRowIndex + 8);
   });
 
   it("stamps the occupancy and the day it ran into the Variable sheet", () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2024-06-01T12:00:00Z"));
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       startDates: { [tenant]: dayTwo },
     });
 
     runBuildLedger();
 
-    expect([
-      ...cellsWrittenTo(batchUpdateCalls, variableGid).entries(),
-    ]).toEqual([
-      [
-        topDataRowIndex,
-        new Map<number, WrittenValue>([
-          [0, tenant],
-          [1, SerialDate.fromYmd({ year: 2024, month: 6, day: 1 })],
-        ]),
-      ],
+    expect(variableRow(grid)).toEqual([
+      tenant,
+      SerialDate.fromYmd({ year: 2024, month: 6, day: 1 }),
     ]);
   });
 
   it("dates the run in the spreadsheet's own zone", () => {
     vi.useFakeTimers({ toFake: ["Date"] });
     vi.setSystemTime(new Date("2024-03-15T02:30:00Z"));
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       timeZone: "Asia/Tokyo",
     });
 
     runBuildLedger();
 
-    expect(
-      cellsWrittenTo(batchUpdateCalls, variableGid)
-        .get(topDataRowIndex)
-        ?.get(1),
-    ).toBe(SerialDate.fromYmd({ year: 2024, month: 3, day: 15 }));
+    expect(variableRow(grid)[1]).toBe(SerialDate.fromYmd({ year: 2024, month: 3, day: 15 }));
   });
 
   it("reads every input sheet in one fetch cycle of its own", () => {
@@ -575,59 +535,57 @@ describe("buildLedger, the page it writes", () => {
   });
 
   it("opens a cut page with a prior balance, then only lines on or after the start date", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       startDates: { [tenant]: dayTwo },
     });
 
     runBuildLedger();
 
-    expect(ledgerRowsWritten(batchUpdateCalls)).toEqual([
-      [dayTwo, "Property management", "Prior balance", 0, "", null, ""],
+    expect(ledgerLines(grid)).toEqual([
+      [dayTwo, "Property management", "Prior balance", 0, "", ""],
       [
         dayTwo,
         "Property management",
         "Damage, waste, or service",
         220,
         "",
-        null,
         "Plumber cost",
       ],
-      [dayTwo, "Household", "Caretaking", "", 25, null, ""],
-      [dayTwo, "Ramsey County", "Payment", "", 200, null, ""],
-      [dayThree, "Property management", "Forgiveness", -110, "", null, ""],
+      [dayTwo, "Household", "Caretaking", "", 25, ""],
+      [dayTwo, "Ramsey County", "Payment", "", 200, ""],
+      [dayThree, "Property management", "Forgiveness", -110, "", ""],
       [
         dayThree,
         "Security deposit",
         "Damage, waste, or service",
         "",
         110,
-        null,
         "",
       ],
     ]);
   });
 
   it("keeps a charge on the start date as its own line after the prior balance", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       startDates: { [tenant]: dayTwo },
     });
 
     runBuildLedger();
 
-    const rows = ledgerRowsWritten(batchUpdateCalls);
+    const rows = ledgerLines(grid);
     expect(rows[0]?.[2]).toBe("Prior balance");
     expect(rows[1]?.[2]).toBe("Damage, waste, or service");
     expect(rows[1]?.[0]).toBe(dayTwo);
   });
 
   it("writes the full ledger with no prior balance when the start date is before every line", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       startDates: { [tenant]: dayOne - 1 },
     });
 
     runBuildLedger();
 
-    expect(ledgerRowsWritten(batchUpdateCalls).map((row) => row[2])).toEqual([
+    expect(ledgerLines(grid).map((row) => row[2])).toEqual([
       "Rent (base)",
       "Security deposit",
       "Payment",
@@ -640,27 +598,26 @@ describe("buildLedger, the page it writes", () => {
   });
 
   it("is only the prior balance when the start date is after every line", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       startDates: { [tenant]: dayThree + 1 },
     });
 
     runBuildLedger();
 
-    expect(ledgerRowsWritten(batchUpdateCalls)).toEqual([
+    expect(ledgerLines(grid)).toEqual([
       [
         dayThree + 1,
         "Property management",
         "Prior balance",
         -225,
         "",
-        null,
         "",
       ],
     ]);
   });
 
   it("still shows a $0 prior balance when history is paid", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       startDates: { [tenant]: dayTwo },
       charges: [
         {
@@ -688,25 +645,25 @@ describe("buildLedger, the page it writes", () => {
 
     runBuildLedger();
 
-    expect(ledgerRowsWritten(batchUpdateCalls)).toEqual([
-      [dayTwo, "Property management", "Prior balance", 0, "", null, ""],
+    expect(ledgerLines(grid)).toEqual([
+      [dayTwo, "Property management", "Prior balance", 0, "", ""],
     ]);
   });
 });
 
 describe("buildLedger, what it reports", () => {
   it("counts the lines it put on the page", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet();
+    const { grid } = stubLedgerSpreadsheet();
 
     runBuildLedger();
 
-    expect(runStatusWritten(batchUpdateCalls)).toBe(
+    expect(runStatus(grid, tenant)).toBe(
       `Built ledger for ${tenantName}: 3 charges, 3 payments, 2 reductions.`,
     );
   });
 
   it("drops the s from a count of one", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       charges: [
         {
           id: rentCharge,
@@ -733,71 +690,72 @@ describe("buildLedger, what it reports", () => {
 
     runBuildLedger();
 
-    expect(runStatusWritten(batchUpdateCalls)).toBe(
+    expect(runStatus(grid, tenant)).toBe(
       `Built ledger for ${tenantName}: 1 charge, 1 payment, 0 reductions.`,
     );
   });
 
   it("names the start date in the run status and ignores the prior balance in the counts", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       startDates: { [tenant]: dayTwo },
     });
 
     runBuildLedger();
 
-    expect(runStatusWritten(batchUpdateCalls)).toBe(
+    expect(runStatus(grid, tenant)).toBe(
       `Built ledger for ${tenantName}, from 25 Mar 2023: 1 charge, 2 payments, 2 reductions.`,
     );
   });
 
   it("reports a prior-balance-only window as a built page of zeroes", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       startDates: { [tenant]: dayThree + 1 },
     });
 
     runBuildLedger();
 
-    expect(runStatusWritten(batchUpdateCalls)).toBe(
+    expect(runStatus(grid, tenant)).toBe(
       `Built ledger for ${tenantName}, from 5 Apr 2023: 0 charges, 0 payments, 0 reductions.`,
     );
   });
 
   it("still carries from in the run status when the start date is before every line", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       startDates: { [tenant]: dayOne - 1 },
     });
 
     runBuildLedger();
 
-    expect(runStatusWritten(batchUpdateCalls)).toBe(
+    expect(runStatus(grid, tenant)).toBe(
       `Built ledger for ${tenantName}, from 14 Mar 2023: 3 charges, 3 payments, 2 reductions.`,
     );
   });
 
   it("says so plainly when an occupancy has nothing billed or paid", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       selectedOccupancyId: newcomer,
       startDates: { [newcomer]: dayTwo },
     });
 
     runBuildLedger();
 
-    expect(runStatusWritten(batchUpdateCalls)).toBe(
+    expect(runStatus(grid, newcomer)).toBe(
       `No charges or payments for ${newcomerName}.`,
     );
   });
 
   it("names the blank cell it hit and leaves the previous ledger alone", () => {
-    const { batchUpdateCalls } = stubLedgerSpreadsheet({
+    const { grid } = stubLedgerSpreadsheet({
       charges: [{ id: rentCharge, occupancyId: tenant, amount: 50 }],
     });
+    const previousLedger = ledgerRows(grid);
 
     runBuildLedger();
 
-    expect(runStatusWritten(batchUpdateCalls)).toMatch(
+    expect(runStatus(grid, tenant)).toMatch(
       /"date".*"occCharge".*4/,
     );
-    expect(ledgerRowsWritten(batchUpdateCalls)).toEqual([]);
-    expect(ledgerRowShapeRequests(batchUpdateCalls)).toEqual([]);
+    expect(previousLedger).toHaveLength(3);
+    expect(ledgerRows(grid)).toEqual(previousLedger);
   });
 });
