@@ -84,6 +84,7 @@ type StagingRowValues = Record<
 >;
 type ExpenseRow = Record<(typeof expenseColumnNames)[number], FakeCellValue>;
 
+const stagingRunStatusColIndex = stagingColumnNames.indexOf("runStatus");
 const receiptIdColIndex = 1;
 
 interface SheetStubProps<C> {
@@ -280,6 +281,19 @@ function rowMessages(grid: FakeGridView): FakeCellValue[] {
   return stagingRows(grid).map((row) => row.runStatus);
 }
 
+function runStatusCells(grid: FakeGridView): FakeCell[] {
+  return grid
+    .sheet(stagingGid)
+    .rows({
+      startRowIndex: topDataRowIndex,
+      startColumnIndex: stagingRunStatusColIndex,
+      endColumnIndex: stagingRunStatusColIndex + 1,
+    })
+    .map(([cell]) => cell ?? null);
+}
+
+const warningColour = { red: 0.99, green: 0.85, blue: 0.7 };
+
 beforeEach(() => {
   stubLogger();
 });
@@ -330,18 +344,18 @@ describe("addPropertyExpense, a mixed batch", () => {
     ]);
   });
 
-  // Every surviving status cell holds a refused row's own report, so the tally goes to the log.
-  it("logs how much of the batch went through", () => {
-    stubExpenseSpreadsheet({
-      stagingRows: mixedBatch,
+  // Refused rows' own reports cover their cells, so a blank row left behind is where this lands.
+  it("ends in the warning state, saying how much of the batch went through", () => {
+    const { grid } = stubExpenseSpreadsheet({
+      stagingRows: [...mixedBatch, {}],
     });
-    const logger = stubLogger();
 
     runAddPropertyExpense();
 
-    expect(logger.log).toHaveBeenCalledWith(
-      "Added 1 of 3 rows; the rest say why in their own cells.",
-    );
+    expect(runStatusCells(grid)).toContainEqual({
+      value: "Added 1 of 3 rows; the rest say why in their own cells.",
+      backgroundColor: warningColour,
+    });
   });
 
   it("reads every input sheet in one fetch cycle of its own", () => {

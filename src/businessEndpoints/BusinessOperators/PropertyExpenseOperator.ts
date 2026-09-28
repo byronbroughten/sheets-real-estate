@@ -244,11 +244,11 @@ function addReport({
   if (refusals.size === 0) {
     return `Added ${countOfExpenses(convertedCount)}.`;
   }
-  // The refused rows are the only ones left, and each one's report covers its status cell.
-  Logger.log(
-    `Added ${convertedCount} of ${entryCount} rows; the rest say why in their own cells.`,
-  );
-  return { rows: refusals };
+  return {
+    runState: "warning",
+    message: `Added ${convertedCount} of ${entryCount} rows; the rest say why in their own cells.`,
+    rows: refusals,
+  };
 }
 
 function countOfExpenses(count: number): string {
