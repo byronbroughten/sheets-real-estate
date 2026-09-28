@@ -542,8 +542,7 @@ describe("addPropertyExpense, what the sheet is left holding", () => {
     ]);
   });
 
-  // Fails until #5: the run-level status never reaches the sheet.
-  it.fails("says how many expenses a clean batch added", () => {
+  it("says how many expenses a clean batch added", () => {
     const { grid } = stubExpenseSpreadsheet({ stagingRows: cleanBatch });
 
     runAddPropertyExpense();
