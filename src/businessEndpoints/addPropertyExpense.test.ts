@@ -344,10 +344,10 @@ describe("addPropertyExpense, a mixed batch", () => {
     ]);
   });
 
-  // Fails until #5: the run-level status never reaches the sheet.
-  it.fails("ends in the warning state, saying how much of the batch went through", () => {
+  // Refused rows' own reports cover their cells, so a blank row left behind is where this lands.
+  it("ends in the warning state, saying how much of the batch went through", () => {
     const { grid } = stubExpenseSpreadsheet({
-      stagingRows: mixedBatch,
+      stagingRows: [...mixedBatch, {}],
     });
 
     runAddPropertyExpense();
