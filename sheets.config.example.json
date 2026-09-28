@@ -1,5 +1,6 @@
 {
   "spreadsheetId": "<your spreadsheet's ID>",
   "generatedDir": "src/generated",
-  "choreHomes": ["src/chores", "src/chores/oneOff"]
+  "choreHomes": ["src/chores", "src/chores/oneOff"],
+  "endpointModule": "src/businessEndpoints.ts"
 }
