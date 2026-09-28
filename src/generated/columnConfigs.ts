@@ -382,7 +382,10 @@ export const columnConfigs = makeColumnConfigs({
     "lawnMowSqft": { "columnId": "c:prp:BIXtc6o", "header": "Lawn mow sqft", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "totalYardSqft": { "columnId": "c:prp:o6ndDOR", "header": "Total yard sqft", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "lockboxCode": { "columnId": "c:prp:BxZaWcU", "header": "Lockbox code", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "currentValueEstimate": { "columnId": "c:prp:6P7vGVV", "header": "Current value estimate", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
+    "currentValueEstimate": { "columnId": "c:prp:6P7vGVV", "header": "Current value estimate", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "baseYear": { "columnId": "c:prp:M-vj8Eg", "header": "Base year", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "baseYearRentMonthly": { "columnId": "c:prp:qjCgeRy", "header": "Base year rent monthly", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "baseYearRentYearly": { "columnId": "c:prp:V-cV6Pp", "header": "Base year rent yearly", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
   },
   "propertyExpense": {
     "expenseName": { "columnId": "c:pex:AWBDank", "header": "Expense name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -677,7 +680,7 @@ export const columnConfigs = makeColumnConfigs({
     "contact": { "columnId": "c:bll:rDa7qLe", "header": "Contact", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "id": { "columnId": "c:bll:e7WRzvw", "header": "ID", "valueName": "id", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "category": { "columnId": "c:bll:vRLws4C", "header": "Category", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "defaultExpenseCategory": { "columnId": "c:bll:3-hKHpH", "header": "Default expense category", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "defaultExpenseCategory": { "columnId": "c:bll:3-hKHpH", "header": "Default expense category", "valueName": "expenseCategory", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "defaultExpenseDescription": { "columnId": "c:bll:rYRm6Nv", "header": "Default expense description", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "notes": { "columnId": "c:bll:n-3RR_o", "header": "Notes", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
   },
@@ -715,12 +718,12 @@ export const columnConfigs = makeColumnConfigs({
     "lawncareBudget": { "columnId": "c:pyr:67A1A0n", "header": "Lawncare budget", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "capexBudget": { "columnId": "c:pyr:WFSs0s9", "header": "CapEx budget", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "utilityCostEstimate": { "columnId": "c:pyr:1wRDVow", "header": "Utility cost estimate", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "actualCosts": { "columnId": "c:pyr:9x1gZ1r", "header": "Actual costs", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "budgetedActualCostsTotal": { "columnId": "c:pyr:9x1gZ1r", "header": "Budgeted actual costs total", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "maintenanceGroundskeepingCosts": { "columnId": "c:pyr:jsZ6vb3", "header": "Maintenance & groundskeeping costs", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "utilityCosts": { "columnId": "c:pyr:LfH9OB9", "header": "Utility costs", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "capexCosts": { "columnId": "c:pyr:q8N3rAA", "header": "CapEx costs", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "vacancyCosts": { "columnId": "c:pyr:vVVTBDr", "header": "Vacancy costs", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "taxableTotal": { "columnId": "c:pyr:HPk3ko4", "header": "Taxable total", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "taxableExpenseTotalFromExpenseSheet": { "columnId": "c:pyr:HPk3ko4", "header": "Taxable expense total from expense sheet", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "absoluteTotal": { "columnId": "c:pyr:Zjpp3E5", "header": "Absolute total", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "cleaningMaintenance": { "columnId": "c:pyr:4LX9hcx", "header": "Cleaning & maintenance", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "insurance": { "columnId": "c:pyr:qHsXi2n", "header": "Insurance", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -739,6 +742,12 @@ export const columnConfigs = makeColumnConfigs({
     "other": { "columnId": "c:pyr:sd95lH2", "header": "Other", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "principal": { "columnId": "c:pyr:eQ-ZyW6", "header": "Principal", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "revenueOverride": { "columnId": "c:pyr:IqqX9A5", "header": "Revenue override", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "taxableTotalFromBuckets": { "columnId": "c:pyr:FRzm7YJ", "header": "Taxable total from buckets", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
+    "taxableTotalFromBuckets": { "columnId": "c:pyr:FRzm7YJ", "header": "Taxable total from buckets", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "baseYear": { "columnId": "c:pyr:Ub8jyaZ", "header": "Base year", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "cpiIncreaseSinceBaseYear": { "columnId": "c:pyr:5q3nGZY", "header": "CPI % increase since base year", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "operatingIncome": { "columnId": "c:pyr:dGJSqqG", "header": "Operating income", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "firstScheduledRentAnnualized": { "columnId": "c:pyr:xRwfMGY", "header": "First scheduled rent annualized", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "firstScheduledRentMonthly": { "columnId": "c:pyr:ulVsLVP", "header": "First scheduled rent monthly", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "operatingExpenseTotal": { "columnId": "c:pyr:FS9Ls-Z", "header": "Operating expense total", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null }
   }
 });

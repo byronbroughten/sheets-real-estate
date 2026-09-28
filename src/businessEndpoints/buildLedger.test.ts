@@ -15,8 +15,7 @@ import {
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Val } from "../appUtils/Val";
-import { columnConfigs } from "../generated/columnConfigs";
-import { sheetConfigs } from "../generated/sheetConfigs";
+import { appConfigs } from "../generated/appConfigs";
 import { buildLedger } from "./buildLedger";
 
 interface ColumnFixture {
@@ -24,6 +23,8 @@ interface ColumnFixture {
   header: string;
 }
 type FakeRow<C> = Partial<Record<keyof C, FakeCell>>;
+
+const { sheetConfigs, columnConfigs } = appConfigs;
 
 const topDataRowIndex = 4;
 const ledgerGid = sheetConfigs.occupancyLedger.sheetGid;

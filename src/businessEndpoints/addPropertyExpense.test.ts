@@ -12,8 +12,7 @@ import {
 import { beforeEach, describe, expect, it } from "vitest";
 
 import { Val } from "../appUtils/Val";
-import { columnConfigs } from "../generated/columnConfigs";
-import { sheetConfigs } from "../generated/sheetConfigs";
+import { appConfigs } from "../generated/appConfigs";
 import { addPropertyExpense } from "./addPropertyExpense";
 
 interface ColumnFixture {
@@ -21,6 +20,8 @@ interface ColumnFixture {
   header: string;
 }
 type FakeRow<C> = Partial<Record<keyof C, FakeCell>>;
+
+const { sheetConfigs, columnConfigs } = appConfigs;
 
 const topDataRowIndex = 4;
 const stagingGid = sheetConfigs.addPropertyExpense.sheetGid;

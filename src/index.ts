@@ -1,7 +1,7 @@
 import { Api } from "@byronbroughten/sheets-framework";
 
-import { appConfigs } from "./appConfigs.js";
 import { businessEndpoints } from "./businessEndpoints.js";
+import { appConfigs } from "./generated/appConfigs.js";
 
 // Also the named level, perhaps check that table start rows are where you expect them all to be.
 // sheet.validateSchemaIndexes()
