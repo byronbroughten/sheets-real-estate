@@ -77,5 +77,10 @@ export const valueConfigs = makeValueConfigs({
   "paymentAllocationDefault": [
     "Earliest unaccounted charge",
     "Next or latest unaccounted charge"
+  ],
+  "paymentAllocateWhat": [
+    "Full payment",
+    "Full charge",
+    "Lesser amount"
   ]
 });

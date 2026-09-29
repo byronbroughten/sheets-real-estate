@@ -165,13 +165,14 @@ export const columnConfigs = makeColumnConfigs({
     "chargePaid": { "columnId": "c:opa:lzDcQoE", "header": "Charge paid", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "chargeDate": { "columnId": "c:opa:r02Ez4Q", "header": "Charge date", "valueName": "date", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "chargeAmount": { "columnId": "c:opa:zpAt_Hr", "header": "Charge amount", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
-    "paymentSummary": { "columnId": "c:opa:HKjqTQu", "header": "Payment summary", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
-    "chargeSummary": { "columnId": "c:opa:A2zvfbX", "header": "Charge summary", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "paymentSummary": { "columnId": "c:opa:HKjqTQu", "header": "Payment summary", "valueName": "date", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "chargeSummary": { "columnId": "c:opa:A2zvfbX", "header": "Charge summary", "valueName": "date", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "paymentUnallocated": { "columnId": "c:opa:brENy9o", "header": "Payment unallocated", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "chargeUnpaid": { "columnId": "c:opa:ixLhj8U", "header": "Charge unpaid", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "amount": { "columnId": "c:opa:xN5Cy2e", "header": "Amount", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "filledOut": { "columnId": "c:opa:2hVYB84", "header": "Filled out", "valueName": "checkbox", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
-    "intendedOccupancyName": { "columnId": "c:opa:10VY2Lr", "header": "Intended occupancy name", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
+    "intendedOccupancyName": { "columnId": "c:opa:10VY2Lr", "header": "Intended occupancy name", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "paymentIntentionId": { "columnId": "c:opa:SIUNSWW", "header": "Payment intention ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
   },
   "occPayment": {
     "id": { "columnId": "c:opy:NV1sUR-", "header": "ID", "valueName": "id", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -388,7 +389,7 @@ export const columnConfigs = makeColumnConfigs({
     "baseYearRentYearly": { "columnId": "c:prp:V-cV6Pp", "header": "Base year rent yearly", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
   },
   "propertyExpense": {
-    "expenseName": { "columnId": "c:pex:AWBDank", "header": "Expense name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "expenseName": { "columnId": "c:pex:AWBDank", "header": "Expense name", "valueName": "date", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "id": { "columnId": "c:pex:jnoYPQx", "header": "ID", "valueName": "id", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "propertyId": { "columnId": "c:pex:MCn6Kvx", "header": "Property ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "date": { "columnId": "c:pex:dNrx6yp", "header": "Date", "valueName": "date", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -421,18 +422,14 @@ export const columnConfigs = makeColumnConfigs({
   },
   "spreadsheetConfig": {
     "idHeader": { "columnId": "c:sscf:XOpXA8U", "header": "ID header", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "startTableColumnIndexBase1": { "columnId": "c:sscf:RtBaCIb", "header": "Start table column index base 1", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "columnGroupHeadingRowIndexBase1": { "columnId": "c:sscf:Tm9zOUP", "header": "Column group heading row index base 1", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "tableMenuSpace": { "columnId": "c:sscf:0xzKfv_", "header": "Table menu space", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "fillRowIdsTimeLastRan": { "columnId": "c:sscf:eV73Th5", "header": "Fill row IDs, time last ran", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "fillRowIdsRunStatus": { "columnId": "c:sscf:ebB4-9S", "header": "Fill row IDs, run status", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "syncConfigSheetRowsTimeLastRan": { "columnId": "c:sscf:pLBSdae", "header": "Sync config sheet rows, time last ran", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "syncConfigSheetRowsRunStatus": { "columnId": "c:sscf:W-JABu_", "header": "Sync config sheet rows, run status", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "idDelimiter": { "columnId": "c:sscf:8uxVA53", "header": "ID delimiter", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "columnIdRowIndexBase1": { "columnId": "c:sscf:Kt9oKSY", "header": "Column ID row index base 1", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "actionRowIndexBase1": { "columnId": "c:sscf:GKSJHu0", "header": "Action row index base 1", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "tableHeaderRowIndexBase1": { "columnId": "c:sscf:58r8zkF", "header": "Table header row index base 1", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "nameHeader": { "columnId": "c:sscf:Gp3PuNE", "header": "Name header", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
+    "nameHeader": { "columnId": "c:sscf:refJUwy", "header": "Name header", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "idDelimiter": { "columnId": "c:sscf:yAH_cCv", "header": "ID delimiter", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "startTableColumnIndexBase1": { "columnId": "c:sscf:7lwR5MT", "header": "Start table column index base 1", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
   },
   "subPayAllocation": {
     "name": { "columnId": "c:spa:BS1Efgp", "header": "Name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -556,7 +553,7 @@ export const columnConfigs = makeColumnConfigs({
     "addressLabel": { "columnId": "c:unt:Mp6iJtN", "header": "Address label", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "bedroomCount": { "columnId": "c:unt:zMK5YkJ", "header": "Bedroom count", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "bathroomCount": { "columnId": "c:unt:v4iRaLi", "header": "Bathroom count", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "unitLocation": { "columnId": "c:unt:81pCTNX", "header": "Unit location", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "locationLabel": { "columnId": "c:unt:81pCTNX", "header": "Location label", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "propertyName": { "columnId": "c:unt:UZtcmDu", "header": "Property name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "streetAddress": { "columnId": "c:unt:aVS06-x", "header": "Street address", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "zipCode": { "columnId": "c:unt:OYMXwgk", "header": "Zip code", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -584,7 +581,8 @@ export const columnConfigs = makeColumnConfigs({
     "paintBathroomWalls": { "columnId": "c:unt:v4b_Aks", "header": "Paint bathroom walls", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "paintBathroomWallsNotes": { "columnId": "c:unt:vmVQXLW", "header": "Paint bathroom walls notes", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "replaceOven": { "columnId": "c:unt:sFpyx2x", "header": "Replace oven", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "areaAddress": { "columnId": "c:unt:N71Gdxg", "header": "Area address", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null }
+    "areaAddress": { "columnId": "c:unt:N71Gdxg", "header": "Area address", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "locationName": { "columnId": "c:unt:NTRnVXC", "header": "Location name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null }
   },
   "valueConfig": {
     "yesOrNo": { "columnId": "c:vcf:x5cyAIy", "header": "Yes or no", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -749,5 +747,25 @@ export const columnConfigs = makeColumnConfigs({
     "firstScheduledRentAnnualized": { "columnId": "c:pyr:xRwfMGY", "header": "First scheduled rent annualized", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "firstScheduledRentMonthly": { "columnId": "c:pyr:ulVsLVP", "header": "First scheduled rent monthly", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "operatingExpenseTotal": { "columnId": "c:pyr:FS9Ls-Z", "header": "Operating expense total", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null }
+  },
+  "occPayIntention": {
+    "paymentName": { "columnId": "c:opi:7Jv62S3", "header": "Payment name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "id": { "columnId": "c:opi:98PrId6", "header": "ID", "valueName": "id", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "paymentId": { "columnId": "c:opi:ozecESY", "header": "Payment ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "occupancyName": { "columnId": "c:opi:HHjT37l", "header": "Occupancy name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "occupancyId": { "columnId": "c:opi:mTQ5ddq", "header": "Occupancy ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "amount": { "columnId": "c:opi:5oV92Pe", "header": "Amount", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "chargeId": { "columnId": "c:opi:xMRpVxv", "header": "Charge ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "chargeDate": { "columnId": "c:opi:tCL8Zt5", "header": "Charge date", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "chargeDescription": { "columnId": "c:opi:lyMiDX2", "header": "Charge description", "valueName": "chargeDescription", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "allocationDefault": { "columnId": "c:opi:2ckeJJH", "header": "Allocation default", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
+  },
+  "addOccPaymentIntention": {
+    "statedSpecificCharge": { "columnId": "c:aopi:J1Mbk8X", "header": "Stated specific charge", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "statedChargeTimeframe": { "columnId": "c:aopi:cWQZjlS", "header": "Stated charge timeframe", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "statedChargeDescription": { "columnId": "c:aopi:QH0o2_f", "header": "Stated charge description", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "amount": { "columnId": "c:aopi:DQC5ua_", "header": "Amount", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "allocateWhat": { "columnId": "c:aopi:YtjlNha", "header": "Allocate what", "valueName": "paymentAllocateWhat", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "lesserAmount": { "columnId": "c:aopi:pW4h4vj", "header": "Lesser amount", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
   }
 });
