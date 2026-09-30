@@ -151,28 +151,27 @@ export const columnConfigs = makeColumnConfigs({
   "occPayAllocation": {
     "name": { "columnId": "c:opa:caCLRPL", "header": "Name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "occupancyName": { "columnId": "c:opa:yXts8sS", "header": "Occupancy name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
-    "paymentId": { "columnId": "c:opa:lypy6OR", "header": "Payment ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "paymentId": { "columnId": "c:opa:lypy6OR", "header": "Payment ID", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "payerCategory": { "columnId": "c:opa:0SIj8rw", "header": "Payer category", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "payerName": { "columnId": "c:opa:Y6aWH2g", "header": "Payer name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "formOfPayment": { "columnId": "c:opa:PpXdAcb", "header": "Form of payment", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
-    "paymentAllocated": { "columnId": "c:opa:zdaGT5A", "header": "Payment allocated", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "designationAllocated": { "columnId": "c:opa:zdaGT5A", "header": "Designation allocated", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "paymentDate": { "columnId": "c:opa:Z6lxCz6", "header": "Payment date", "valueName": "date", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
-    "paymentAmount": { "columnId": "c:opa:SUV1bxP", "header": "Payment amount", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "designatedAmount": { "columnId": "c:opa:SUV1bxP", "header": "Designated amount", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "chargeId": { "columnId": "c:opa:NuTmXgC", "header": "Charge ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "occupancyId": { "columnId": "c:opa:CsnRygh", "header": "Occupancy ID", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "chargedOccupancyId": { "columnId": "c:opa:CsnRygh", "header": "Charged occupancy ID", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "propertyId": { "columnId": "c:opa:lloaz5_", "header": "Property ID", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "chargeDescription": { "columnId": "c:opa:oh7TraW", "header": "Charge description", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "chargePaid": { "columnId": "c:opa:lzDcQoE", "header": "Charge paid", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "chargeDate": { "columnId": "c:opa:r02Ez4Q", "header": "Charge date", "valueName": "date", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "chargeAmount": { "columnId": "c:opa:zpAt_Hr", "header": "Charge amount", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
-    "paymentSummary": { "columnId": "c:opa:HKjqTQu", "header": "Payment summary", "valueName": "date", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
-    "chargeSummary": { "columnId": "c:opa:A2zvfbX", "header": "Charge summary", "valueName": "date", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
-    "paymentUnallocated": { "columnId": "c:opa:brENy9o", "header": "Payment unallocated", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "paymentDesignationUnallocated": { "columnId": "c:opa:brENy9o", "header": "Payment designation unallocated", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "chargeUnpaid": { "columnId": "c:opa:ixLhj8U", "header": "Charge unpaid", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "amount": { "columnId": "c:opa:xN5Cy2e", "header": "Amount", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "filledOut": { "columnId": "c:opa:2hVYB84", "header": "Filled out", "valueName": "checkbox", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
-    "intendedOccupancyName": { "columnId": "c:opa:10VY2Lr", "header": "Intended occupancy name", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "paymentIntentionId": { "columnId": "c:opa:SIUNSWW", "header": "Payment intention ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
+    "designatedOccupancyId": { "columnId": "c:opa:10VY2Lr", "header": "Designated occupancy ID", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "paymentDesignationId": { "columnId": "c:opa:SIUNSWW", "header": "Payment designation ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "chargeAndDesignationOccupancyMatches": { "columnId": "c:opa:ZZUs-id", "header": "Charge and designation occupancy matches", "valueName": "checkbox", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null }
   },
   "occPayment": {
     "id": { "columnId": "c:opy:NV1sUR-", "header": "ID", "valueName": "id", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -182,14 +181,14 @@ export const columnConfigs = makeColumnConfigs({
     "payerCategory": { "columnId": "c:opy:XrhVhn3", "header": "Payer category", "valueName": "payerCategory", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "payerDescription": { "columnId": "c:opy:EXyFtvV", "header": "Payer description", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "nonOccupantPayerId": { "columnId": "c:opy:qtts0sn", "header": "Non-occupant payer ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "amountAllocated": { "columnId": "c:opy:DrLXuGg", "header": "Amount allocated", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "processed": { "columnId": "c:opy:xzjkI0l", "header": "Processed", "valueName": "checkbox", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "notes": { "columnId": "c:opy:tI8xB-J", "header": "Notes", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "name": { "columnId": "c:opy:PJ85xuu", "header": "Name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
-    "intendedOccupancyName": { "columnId": "c:opy:lpJk5ql", "header": "Intended occupancy name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "designatedOccupancyName": { "columnId": "c:opy:lpJk5ql", "header": "Designated occupancy name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "formOfPayment": { "columnId": "c:opy:n0LdBz1", "header": "Form of payment", "valueName": "formOfPayment", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "status": { "columnId": "c:opy:eCUzdxd", "header": "Status", "valueName": "paymentStatus", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "amountIntended": { "columnId": "c:opy:zLB-PcA", "header": "Amount intended", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null }
+    "paymentStatus": { "columnId": "c:opy:eCUzdxd", "header": "Payment status", "valueName": "paymentStatus", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "amountDesignated": { "columnId": "c:opy:zLB-PcA", "header": "Amount designated", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "amountAllocated": { "columnId": "c:opy:5cGOWSr", "header": "Amount allocated", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null }
   },
   "occupancy": {
     "name": { "columnId": "c:occ:1gNRAmL", "header": "Name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -245,7 +244,7 @@ export const columnConfigs = makeColumnConfigs({
     "nextDistrictEnergyWaterHeating": { "columnId": "c:occ:1acd-35", "header": "Next district energy water heating", "valueName": "checkbox", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "nextTermsEndDate": { "columnId": "c:occ:CyaqAOx", "header": "Next terms end date", "valueName": "date", "isFormula": false, "emptyValueAllowed": true, "customDefaultValue": null },
     "nextTermsNoticeSentDate": { "columnId": "c:occ:P5wcm1S", "header": "Next terms notice sent date", "valueName": "date", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "nextTermsNotes": { "columnId": "c:occ:XlxDugC", "header": "Next terms notes", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "nextTermsNotes": { "columnId": "c:occ:XlxDugC", "header": "Next terms notes", "valueName": "string", "isFormula": false, "emptyValueAllowed": true, "customDefaultValue": null },
     "buildLedgerStartDate": { "columnId": "c:occ:hRbSeP1", "header": "Build ledger, start date", "valueName": "date", "isFormula": false, "emptyValueAllowed": true, "customDefaultValue": null },
     "depositRemaining": { "columnId": "c:occ:_X3upH-", "header": "Deposit remaining", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "depositCharged": { "columnId": "c:occ:hOwrZVe", "header": "Deposit charged", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -426,10 +425,7 @@ export const columnConfigs = makeColumnConfigs({
     "fillRowIdsTimeLastRan": { "columnId": "c:sscf:eV73Th5", "header": "Fill row IDs, time last ran", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "fillRowIdsRunStatus": { "columnId": "c:sscf:ebB4-9S", "header": "Fill row IDs, run status", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "syncConfigSheetRowsTimeLastRan": { "columnId": "c:sscf:pLBSdae", "header": "Sync config sheet rows, time last ran", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "syncConfigSheetRowsRunStatus": { "columnId": "c:sscf:W-JABu_", "header": "Sync config sheet rows, run status", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "nameHeader": { "columnId": "c:sscf:refJUwy", "header": "Name header", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "idDelimiter": { "columnId": "c:sscf:yAH_cCv", "header": "ID delimiter", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "startTableColumnIndexBase1": { "columnId": "c:sscf:7lwR5MT", "header": "Start table column index base 1", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
+    "syncConfigSheetRowsRunStatus": { "columnId": "c:sscf:W-JABu_", "header": "Sync config sheet rows, run status", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
   },
   "subPayAllocation": {
     "name": { "columnId": "c:spa:BS1Efgp", "header": "Name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -748,7 +744,7 @@ export const columnConfigs = makeColumnConfigs({
     "firstScheduledRentMonthly": { "columnId": "c:pyr:ulVsLVP", "header": "First scheduled rent monthly", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "operatingExpenseTotal": { "columnId": "c:pyr:FS9Ls-Z", "header": "Operating expense total", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null }
   },
-  "occPayIntention": {
+  "occPayDesignation": {
     "paymentName": { "columnId": "c:opi:7Jv62S3", "header": "Payment name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "id": { "columnId": "c:opi:98PrId6", "header": "ID", "valueName": "id", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "paymentId": { "columnId": "c:opi:ozecESY", "header": "Payment ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -758,7 +754,9 @@ export const columnConfigs = makeColumnConfigs({
     "chargeId": { "columnId": "c:opi:xMRpVxv", "header": "Charge ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "chargeDate": { "columnId": "c:opi:tCL8Zt5", "header": "Charge date", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "chargeDescription": { "columnId": "c:opi:lyMiDX2", "header": "Charge description", "valueName": "chargeDescription", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "allocationDefault": { "columnId": "c:opi:2ckeJJH", "header": "Allocation default", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
+    "allocationDefault": { "columnId": "c:opi:2ckeJJH", "header": "Allocation default", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "paymentDate": { "columnId": "c:opi:wOTPtK2", "header": "Payment date", "valueName": "date", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
+    "amountAllocated": { "columnId": "c:opi:EqviHS6", "header": "Amount allocated", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null }
   },
   "addOccPaymentIntention": {
     "statedSpecificCharge": { "columnId": "c:aopi:J1Mbk8X", "header": "Stated specific charge", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },

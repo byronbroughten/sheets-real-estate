@@ -1,7 +1,7 @@
 import { makeSheetConfigs } from "../../../framework/src/01_SpreadsheetSchema/makeConfigs";
 
 export const sheetConfigs = makeSheetConfigs({
-  "occPayIntention": { "sheetGid": 967730950, "idPrefix": "opi", "hasIdColumn": true, "hasNameColumn": false },
+  "occPayDesignation": { "sheetGid": 967730950, "idPrefix": "opi", "hasIdColumn": true, "hasNameColumn": false },
   "addOccPaymentIntention": { "sheetGid": 856968303, "idPrefix": "aopi", "hasIdColumn": false, "hasNameColumn": false },
   "valueConfig": { "sheetGid": 2119236084, "idPrefix": "vcf", "hasIdColumn": false, "hasNameColumn": false },
   "sheetConfig": { "sheetGid": 210603630, "idPrefix": "scf", "hasIdColumn": false, "hasNameColumn": false },

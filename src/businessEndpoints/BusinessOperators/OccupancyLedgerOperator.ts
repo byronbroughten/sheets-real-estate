@@ -103,7 +103,7 @@ export class OccupancyLedgerOperator extends SheetBaseNamed<"occupancyLedger"> {
     );
     ss.sheet("occPayAllocation").prepFetchColumnsFull(
       "paymentId",
-      "occupancyId",
+      "designatedOccupancyId",
       "filledOut",
       "formOfPayment",
       "payerCategory",
@@ -162,7 +162,7 @@ export class OccupancyLedgerOperator extends SheetBaseNamed<"occupancyLedger"> {
   private _paymentLines(occupancyId: string): LedgerLine[] {
     const allocations = this.ss
       .sheet("occPayAllocation")
-      .rowsFiltered({ occupancyId, filledOut: true });
+      .rowsFiltered({ designatedOccupancyId: occupancyId, filledOut: true });
     return paymentsFromAllocations(allocations).map((payment) => ({
       kind: "payment",
       date: payment.date,
