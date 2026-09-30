@@ -206,7 +206,7 @@ type AllocationRow = FakeRow<typeof columnConfigs.occPayAllocation>;
 const allocationRows: AllocationRow[] = [
   {
     paymentId: "r:opy:rentAndDeposit",
-    occupancyId: tenant,
+    designatedOccupancyId: tenant,
     filledOut: true,
     formOfPayment: "Payment",
     payerCategory: "Household",
@@ -217,7 +217,7 @@ const allocationRows: AllocationRow[] = [
   },
   {
     paymentId: "r:opy:rentAndDeposit",
-    occupancyId: tenant,
+    designatedOccupancyId: tenant,
     filledOut: true,
     formOfPayment: "Payment",
     payerCategory: "Household",
@@ -228,7 +228,7 @@ const allocationRows: AllocationRow[] = [
   },
   {
     paymentId: "r:opy:caretaking",
-    occupancyId: tenant,
+    designatedOccupancyId: tenant,
     filledOut: true,
     formOfPayment: "Caretaking",
     payerCategory: "Household",
@@ -239,7 +239,7 @@ const allocationRows: AllocationRow[] = [
   },
   {
     paymentId: "r:opy:agency",
-    occupancyId: tenant,
+    designatedOccupancyId: tenant,
     filledOut: true,
     formOfPayment: "Payment",
     payerCategory: "Non-occupant",
@@ -250,7 +250,7 @@ const allocationRows: AllocationRow[] = [
   },
   {
     paymentId: "r:opy:halfEntered",
-    occupancyId: tenant,
+    designatedOccupancyId: tenant,
     filledOut: false,
     formOfPayment: "Payment",
     payerCategory: "Household",
@@ -261,7 +261,7 @@ const allocationRows: AllocationRow[] = [
   },
   {
     paymentId: "r:opy:neighbour",
-    occupancyId: neighbour,
+    designatedOccupancyId: neighbour,
     filledOut: true,
     formOfPayment: "Payment",
     payerCategory: "Household",
@@ -278,7 +278,7 @@ function stubOccPayAllocation(dataRows: AllocationRow[] = allocationRows) {
     config: columnConfigs.occPayAllocation,
     columnNames: [
       "paymentId",
-      "occupancyId",
+      "designatedOccupancyId",
       "filledOut",
       "formOfPayment",
       "payerCategory",
@@ -452,7 +452,7 @@ describe("buildLedger, the page it writes", () => {
       allocations: [
         {
           paymentId: "r:opy:deposit",
-          occupancyId: tenant,
+          designatedOccupancyId: tenant,
           filledOut: true,
           formOfPayment: "Payment",
           payerCategory: "Household",
@@ -632,7 +632,7 @@ describe("buildLedger, the page it writes", () => {
       allocations: [
         {
           paymentId: "r:opy:deposit",
-          occupancyId: tenant,
+          designatedOccupancyId: tenant,
           filledOut: true,
           formOfPayment: "Payment",
           payerCategory: "Household",
@@ -677,7 +677,7 @@ describe("buildLedger, what it reports", () => {
       allocations: [
         {
           paymentId: "r:opy:rent",
-          occupancyId: tenant,
+          designatedOccupancyId: tenant,
           filledOut: true,
           formOfPayment: "Payment",
           payerCategory: "Household",
