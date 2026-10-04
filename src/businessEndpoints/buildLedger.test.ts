@@ -754,7 +754,7 @@ describe("buildLedger, what it reports", () => {
     runBuildLedger();
 
     expect(runStatus(grid, tenant)).toMatch(
-      /"date".*"occCharge".*4/,
+      /"date".*"occCharge".*row 5\./,
     );
     expect(previousLedger).toHaveLength(3);
     expect(ledgerRows(grid)).toEqual(previousLedger);
