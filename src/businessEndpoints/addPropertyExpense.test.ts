@@ -1,6 +1,7 @@
 import { SpreadsheetBaseNamed } from "@byronbroughten/sheets-framework";
 import {
   EndpointRun,
+  type FakeBodyRow,
   type FakeCell,
   type FakeCellValue,
   type FakeGridView,
@@ -13,8 +14,6 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import { appConfigs } from "../generated/appConfigs";
 import { addPropertyExpense } from "./addPropertyExpense";
-
-type FakeRow<C> = Partial<Record<keyof C, FakeCell>>;
 
 const { sheetConfigs, columnConfigs } = appConfigs;
 
@@ -82,7 +81,7 @@ type ExpenseRow = Record<(typeof expenseColumnNames)[number], FakeCellValue>;
 const stagingRunStatusColIndex = stagingColumnNames.indexOf("runStatus");
 const receiptIdColIndex = 1;
 
-type StagingRow = FakeRow<typeof columnConfigs.addPropertyExpense>;
+type StagingRow = FakeBodyRow<keyof typeof columnConfigs.addPropertyExpense>;
 
 // Everything a person must type, so a test only has to say what it varies.
 function typedRow(overrides: StagingRow = {}): StagingRow {
@@ -109,7 +108,7 @@ function stubStaging(dataRows: readonly StagingRow[]): FakeSheetProperties {
 }
 
 function stubProperty(
-  dataRows?: readonly FakeRow<typeof columnConfigs.property>[],
+  dataRows?: readonly FakeBodyRow<keyof typeof columnConfigs.property>[],
 ) {
   return fakeTableSheet.build({
     sheetId: sheetConfigs.property.sheetGid,
@@ -174,7 +173,7 @@ function stubPropertyExpense() {
 
 interface ExpenseSpreadsheetProps {
   stagingRows: readonly StagingRow[];
-  properties?: readonly FakeRow<typeof columnConfigs.property>[];
+  properties?: readonly FakeBodyRow<keyof typeof columnConfigs.property>[];
 }
 
 function stubExpenseSpreadsheet({

@@ -4,6 +4,7 @@ import {
 } from "@byronbroughten/sheets-framework";
 import {
   EndpointRun,
+  type FakeBodyRow,
   type FakeCell,
   type FakeCellValue,
   type FakeGridView,
@@ -16,8 +17,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Val } from "../appUtils/Val";
 import { appConfigs } from "../generated/appConfigs";
 import { buildLedger } from "./buildLedger";
-
-type FakeRow<C> = Partial<Record<keyof C, FakeCell>>;
 
 const { sheetConfigs, columnConfigs } = appConfigs;
 
@@ -83,7 +82,7 @@ function stubOccupancy(
   });
 }
 
-type ChargeRow = FakeRow<typeof columnConfigs.occCharge>;
+type ChargeRow = FakeBodyRow<keyof typeof columnConfigs.occCharge>;
 
 const chargeRows: ChargeRow[] = [
   {
@@ -165,7 +164,7 @@ function stubOccChargeReduce() {
   });
 }
 
-type AllocationRow = FakeRow<typeof columnConfigs.occPayAllocation>;
+type AllocationRow = FakeBodyRow<keyof typeof columnConfigs.occPayAllocation>;
 
 // The first two are one payment split across two charges; the last two must not appear.
 const allocationRows: AllocationRow[] = [

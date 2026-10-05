@@ -1,7 +1,7 @@
 import { SpreadsheetBaseNamed } from "@byronbroughten/sheets-framework";
 import {
   EndpointRun,
-  type FakeCell,
+  type FakeBodyRow,
   type FakeCellValue,
   type FakeGridView,
   fakeTableSheet,
@@ -13,8 +13,6 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { Val } from "../appUtils/Val";
 import { appConfigs } from "../generated/appConfigs";
 import { updateTerms } from "./updateTerms";
-
-type FakeRow<C> = Partial<Record<keyof C, FakeCell>>;
 
 const { sheetConfigs, columnConfigs } = appConfigs;
 
@@ -88,7 +86,7 @@ const tenantNextStart = 45365;
 const neighbourLatestStart = 44000;
 const neighbourNextStart = 44500;
 
-type OccupancyRow = FakeRow<typeof columnConfigs.occupancy>;
+type OccupancyRow = FakeBodyRow<keyof typeof columnConfigs.occupancy>;
 
 // Every next-terms value a person fills in, so a test says only what it varies.
 function nextTerms(overrides: OccupancyRow = {}): OccupancyRow {
@@ -144,7 +142,7 @@ function stubOccupancy({ tenantRow, neighbourRow }: OccupancyProps) {
   });
 }
 
-type ExistingTermsRow = FakeRow<typeof columnConfigs.occupancyTerms>;
+type ExistingTermsRow = FakeBodyRow<keyof typeof columnConfigs.occupancyTerms>;
 
 function stubOccupancyTerms(tenantEndDate: number | null) {
   const existing: ExistingTermsRow[] = [
