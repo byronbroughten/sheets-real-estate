@@ -1,11 +1,10 @@
 import { SpreadsheetBaseNamed } from "@byronbroughten/sheets-framework";
 import {
-  buildGridRows,
   EndpointRun,
-  type FakeCell,
+  type FakeBodyRow,
   type FakeCellValue,
   type FakeGridView,
-  type FakeSheetProperties,
+  fakeTableSheet,
   stubLogger,
   stubSheetsService,
 } from "@byronbroughten/sheets-framework/testing";
@@ -15,15 +14,8 @@ import { Val } from "../appUtils/Val";
 import { appConfigs } from "../generated/appConfigs";
 import { updateTerms } from "./updateTerms";
 
-interface ColumnFixture {
-  columnId: string;
-  header: string;
-}
-type FakeRow<C> = Partial<Record<keyof C, FakeCell>>;
-
 const { sheetConfigs, columnConfigs } = appConfigs;
 
-const topDataRowIndex = 4;
 const occupancyGid = sheetConfigs.occupancy.sheetGid;
 const termsGid = sheetConfigs.occupancyTerms.sheetGid;
 
@@ -94,39 +86,7 @@ const tenantNextStart = 45365;
 const neighbourLatestStart = 44000;
 const neighbourNextStart = 44500;
 
-interface SheetStubProps<C> {
-  sheetName: keyof typeof sheetConfigs;
-  config: C;
-  columnNames: readonly (keyof C)[];
-  dataRows: readonly FakeRow<C>[];
-}
-
-function stubSheet<C extends Record<string, ColumnFixture>>({
-  sheetName,
-  config,
-  columnNames,
-  dataRows,
-}: SheetStubProps<C>): FakeSheetProperties {
-  const columnOf = (columnName: keyof C): ColumnFixture =>
-    Val.assert(config[columnName], `column "${String(columnName)}"`);
-  return {
-    sheetId: sheetConfigs[sheetName].sheetGid,
-    title: sheetName,
-    rows: buildGridRows({
-      0: columnNames.map((columnName) => columnOf(columnName).columnId),
-      3: columnNames.map((columnName) => columnOf(columnName).header),
-      ...Object.fromEntries(
-        dataRows.map((row, index) => [
-          topDataRowIndex + index,
-          columnNames.map((columnName) => row[columnName] ?? null),
-        ]),
-      ),
-    }),
-    table: { endRowIndex: topDataRowIndex + dataRows.length },
-  };
-}
-
-type OccupancyRow = FakeRow<typeof columnConfigs.occupancy>;
+type OccupancyRow = FakeBodyRow<keyof typeof columnConfigs.occupancy>;
 
 // Every next-terms value a person fills in, so a test says only what it varies.
 function nextTerms(overrides: OccupancyRow = {}): OccupancyRow {
@@ -159,11 +119,12 @@ interface OccupancyProps {
 }
 
 function stubOccupancy({ tenantRow, neighbourRow }: OccupancyProps) {
-  return stubSheet({
-    sheetName: "occupancy",
-    config: columnConfigs.occupancy,
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.occupancy.sheetGid,
+    title: "occupancy",
+    columnConfigs: columnConfigs.occupancy,
     columnNames: occupancyColumnNames,
-    dataRows: [
+    bodyRows: [
       {
         id: tenant,
         latestOccupancyTermsId: tenantTerms,
@@ -181,7 +142,7 @@ function stubOccupancy({ tenantRow, neighbourRow }: OccupancyProps) {
   });
 }
 
-type ExistingTermsRow = FakeRow<typeof columnConfigs.occupancyTerms>;
+type ExistingTermsRow = FakeBodyRow<keyof typeof columnConfigs.occupancyTerms>;
 
 function stubOccupancyTerms(tenantEndDate: number | null) {
   const existing: ExistingTermsRow[] = [
@@ -197,11 +158,12 @@ function stubOccupancyTerms(tenantEndDate: number | null) {
       startDate: neighbourLatestStart,
     },
   ];
-  return stubSheet({
-    sheetName: "occupancyTerms",
-    config: columnConfigs.occupancyTerms,
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.occupancyTerms.sheetGid,
+    title: "occupancyTerms",
+    columnConfigs: columnConfigs.occupancyTerms,
     columnNames: termsColumnNames,
-    dataRows: existing,
+    bodyRows: existing,
   });
 }
 
@@ -232,10 +194,7 @@ function runUpdateTerms(): void {
 function termsRows(grid: FakeGridView): TermsRow[] {
   return grid
     .sheet(termsGid)
-    .values({
-      startRowIndex: topDataRowIndex,
-      endColumnIndex: termsColumnNames.length,
-    })
+    .bodyValues({ endColumnIndex: termsColumnNames.length })
     .map(
       (row) =>
         Object.fromEntries(
@@ -270,10 +229,7 @@ function occupancyCell(
   return (
     grid
       .sheet(occupancyGid)
-      .values({
-        startRowIndex: topDataRowIndex,
-        endColumnIndex: occupancyColumnNames.length,
-      })
+      .bodyValues({ endColumnIndex: occupancyColumnNames.length })
       .find((row) => row[0] === occupancyId)?.[colIndex] ?? null
   );
 }
@@ -328,9 +284,9 @@ describe("updateTerms, a new term after an open-ended one", () => {
 
     runUpdateTerms();
 
-    expect(
-      occupancyCell(grid, tenant, runStatusColIndex),
-    ).toBe("Occupancy terms updated");
+    expect(occupancyCell(grid, tenant, runStatusColIndex)).toBe(
+      "Occupancy terms updated",
+    );
     expect(occupancyCell(grid, tenant, selectColIndex)).toBe(false);
   });
 

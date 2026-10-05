@@ -1,29 +1,22 @@
 import { SpreadsheetBaseNamed } from "@byronbroughten/sheets-framework";
 import {
-  buildGridRows,
   EndpointRun,
+  type FakeBodyRow,
   type FakeCell,
   type FakeCellValue,
   type FakeGridView,
   type FakeSheetProperties,
+  fakeTableSheet,
   stubLogger,
   stubSheetsService,
 } from "@byronbroughten/sheets-framework/testing";
 import { beforeEach, describe, expect, it } from "vitest";
 
-import { Val } from "../appUtils/Val";
 import { appConfigs } from "../generated/appConfigs";
 import { addPropertyExpense } from "./addPropertyExpense";
 
-interface ColumnFixture {
-  columnId: string;
-  header: string;
-}
-type FakeRow<C> = Partial<Record<keyof C, FakeCell>>;
-
 const { sheetConfigs, columnConfigs } = appConfigs;
 
-const topDataRowIndex = 4;
 const stagingGid = sheetConfigs.addPropertyExpense.sheetGid;
 const expenseGid = sheetConfigs.propertyExpense.sheetGid;
 const receiptGid = sheetConfigs.splitReceipt.sheetGid;
@@ -88,42 +81,7 @@ type ExpenseRow = Record<(typeof expenseColumnNames)[number], FakeCellValue>;
 const stagingRunStatusColIndex = stagingColumnNames.indexOf("runStatus");
 const receiptIdColIndex = 1;
 
-interface SheetStubProps<C> {
-  sheetName: keyof typeof sheetConfigs;
-  config: C;
-  columnNames: readonly (keyof C)[];
-  dataRows: readonly FakeRow<C>[];
-  // The title, not the config name, is what a refusal message quotes.
-  title?: string;
-}
-
-function stubSheet<C extends Record<string, ColumnFixture>>({
-  sheetName,
-  config,
-  columnNames,
-  dataRows,
-  title = sheetName,
-}: SheetStubProps<C>): FakeSheetProperties {
-  const columnOf = (columnName: keyof C): ColumnFixture =>
-    Val.assert(config[columnName], `column "${String(columnName)}"`);
-  return {
-    sheetId: sheetConfigs[sheetName].sheetGid,
-    title,
-    rows: buildGridRows({
-      0: columnNames.map((columnName) => columnOf(columnName).columnId),
-      3: columnNames.map((columnName) => columnOf(columnName).header),
-      ...Object.fromEntries(
-        dataRows.map((row, index) => [
-          topDataRowIndex + index,
-          columnNames.map((columnName) => row[columnName] ?? null),
-        ]),
-      ),
-    }),
-    table: { endRowIndex: topDataRowIndex + dataRows.length },
-  };
-}
-
-type StagingRow = FakeRow<typeof columnConfigs.addPropertyExpense>;
+type StagingRow = FakeBodyRow<keyof typeof columnConfigs.addPropertyExpense>;
 
 // Everything a person must type, so a test only has to say what it varies.
 function typedRow(overrides: StagingRow = {}): StagingRow {
@@ -140,23 +98,25 @@ function typedRow(overrides: StagingRow = {}): StagingRow {
 }
 
 function stubStaging(dataRows: readonly StagingRow[]): FakeSheetProperties {
-  return stubSheet({
-    sheetName: "addPropertyExpense",
-    config: columnConfigs.addPropertyExpense,
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.addPropertyExpense.sheetGid,
+    title: "addPropertyExpense",
+    columnConfigs: columnConfigs.addPropertyExpense,
     columnNames: stagingColumnNames,
-    dataRows,
+    bodyRows: dataRows,
   });
 }
 
 function stubProperty(
-  dataRows?: readonly FakeRow<typeof columnConfigs.property>[],
+  dataRows?: readonly FakeBodyRow<keyof typeof columnConfigs.property>[],
 ) {
-  return stubSheet({
-    sheetName: "property",
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.property.sheetGid,
+    // The title, not the config name, is what a refusal message quotes.
     title: "Property",
-    config: columnConfigs.property,
+    columnConfigs: columnConfigs.property,
     columnNames: ["name", "id"],
-    dataRows: dataRows ?? [
+    bodyRows: dataRows ?? [
       { name: caseName, id: caseProperty },
       { name: charlesName, id: charlesProperty },
     ],
@@ -164,12 +124,12 @@ function stubProperty(
 }
 
 function stubUnit() {
-  return stubSheet({
-    sheetName: "unit",
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.unit.sheetGid,
     title: "Unit",
-    config: columnConfigs.unit,
+    columnConfigs: columnConfigs.unit,
     columnNames: ["name", "id", "propertyId"],
-    dataRows: [
+    bodyRows: [
       { name: caseUnitName, id: caseUnit, propertyId: caseProperty },
       { name: charlesUnitName, id: charlesUnit, propertyId: charlesProperty },
     ],
@@ -178,12 +138,12 @@ function stubUnit() {
 
 // The second receipt has no id yet, which the run is expected to mint.
 function stubSplitReceipt() {
-  return stubSheet({
-    sheetName: "splitReceipt",
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.splitReceipt.sheetGid,
     title: "Split Receipt",
-    config: columnConfigs.splitReceipt,
+    columnConfigs: columnConfigs.splitReceipt,
     columnNames: ["name", "id"],
-    dataRows: [
+    bodyRows: [
       { name: hardwareReceiptName, id: hardwareReceipt },
       { name: lumberReceiptName },
     ],
@@ -194,11 +154,12 @@ const previousExpenseCount = 2;
 
 // Two rows, so an append can never collapse into a blank-row reuse.
 function stubPropertyExpense() {
-  return stubSheet({
-    sheetName: "propertyExpense",
-    config: columnConfigs.propertyExpense,
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.propertyExpense.sheetGid,
+    title: "propertyExpense",
+    columnConfigs: columnConfigs.propertyExpense,
     columnNames: expenseColumnNames,
-    dataRows: [
+    bodyRows: [
       { id: "r:pex:old", propertyId: caseProperty, date: 44000, amount: 10 },
       {
         id: "r:pex:older",
@@ -212,7 +173,7 @@ function stubPropertyExpense() {
 
 interface ExpenseSpreadsheetProps {
   stagingRows: readonly StagingRow[];
-  properties?: readonly FakeRow<typeof columnConfigs.property>[];
+  properties?: readonly FakeBodyRow<keyof typeof columnConfigs.property>[];
 }
 
 function stubExpenseSpreadsheet({
@@ -248,10 +209,7 @@ function rowsOf<N extends string>(
 ): Record<N, FakeCellValue>[] {
   return grid
     .sheet(sheetGid)
-    .values({
-      startRowIndex: topDataRowIndex,
-      endColumnIndex: columnNames.length,
-    })
+    .bodyValues({ endColumnIndex: columnNames.length })
     .map(
       (row) =>
         Object.fromEntries(
@@ -285,8 +243,7 @@ function rowMessages(grid: FakeGridView): FakeCellValue[] {
 function runStatusCells(grid: FakeGridView): FakeCell[] {
   return grid
     .sheet(stagingGid)
-    .rows({
-      startRowIndex: topDataRowIndex,
+    .bodyRows({
       startColumnIndex: stagingRunStatusColIndex,
       endColumnIndex: stagingRunStatusColIndex + 1,
     })
@@ -512,9 +469,9 @@ describe("addPropertyExpense, the split receipt", () => {
 
     runAddPropertyExpense();
 
-    const mintedId = grid
-      .sheet(receiptGid)
-      .values({ startRowIndex: topDataRowIndex + 1 })[0]?.[receiptIdColIndex];
+    const mintedId = grid.sheet(receiptGid).bodyValues()[1]?.[
+      receiptIdColIndex
+    ];
     expect(mintedId).toMatch(/^r:srct:/);
     expect(expensesAdded(grid)[0]).toMatchObject({
       splitReceiptId: mintedId,

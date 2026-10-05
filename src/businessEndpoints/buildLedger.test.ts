@@ -3,12 +3,12 @@ import {
   SpreadsheetBaseNamed,
 } from "@byronbroughten/sheets-framework";
 import {
-  buildGridRows,
   EndpointRun,
+  type FakeBodyRow,
   type FakeCell,
   type FakeCellValue,
   type FakeGridView,
-  type FakeSheetProperties,
+  fakeTableSheet,
   stubLogger,
   stubSheetsService,
 } from "@byronbroughten/sheets-framework/testing";
@@ -18,15 +18,8 @@ import { Val } from "../appUtils/Val";
 import { appConfigs } from "../generated/appConfigs";
 import { buildLedger } from "./buildLedger";
 
-interface ColumnFixture {
-  columnId: string;
-  header: string;
-}
-type FakeRow<C> = Partial<Record<keyof C, FakeCell>>;
-
 const { sheetConfigs, columnConfigs } = appConfigs;
 
-const topDataRowIndex = 4;
 const ledgerGid = sheetConfigs.occupancyLedger.sheetGid;
 const variableGid = sheetConfigs.variable.sheetGid;
 const occupancyGid = sheetConfigs.occupancy.sheetGid;
@@ -57,47 +50,16 @@ const dayOne = 45000;
 const dayTwo = 45010;
 const dayThree = 45020;
 
-interface SheetStubProps<C> {
-  sheetName: keyof typeof sheetConfigs;
-  config: C;
-  columnNames: readonly (keyof C)[];
-  dataRows: readonly FakeRow<C>[];
-}
-
-function stubSheet<C extends Record<string, ColumnFixture>>({
-  sheetName,
-  config,
-  columnNames,
-  dataRows,
-}: SheetStubProps<C>): FakeSheetProperties {
-  const columnOf = (columnName: keyof C): ColumnFixture =>
-    Val.assert(config[columnName], `column "${String(columnName)}"`);
-  return {
-    sheetId: sheetConfigs[sheetName].sheetGid,
-    title: sheetName,
-    rows: buildGridRows({
-      0: columnNames.map((columnName) => columnOf(columnName).columnId),
-      3: columnNames.map((columnName) => columnOf(columnName).header),
-      ...Object.fromEntries(
-        dataRows.map((row, index) => [
-          topDataRowIndex + index,
-          columnNames.map((columnName) => row[columnName] ?? null),
-        ]),
-      ),
-    }),
-    table: { endRowIndex: topDataRowIndex + dataRows.length },
-  };
-}
-
 function stubOccupancy(
   selectedOccupancyId: string,
   startDates: Partial<Record<string, number>> = {},
 ) {
-  return stubSheet({
-    sheetName: "occupancy",
-    config: columnConfigs.occupancy,
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.occupancy.sheetGid,
+    title: "occupancy",
+    columnConfigs: columnConfigs.occupancy,
     columnNames: occupancyColumnNames,
-    dataRows: [
+    bodyRows: [
       {
         id: tenant,
         name: tenantName,
@@ -120,7 +82,7 @@ function stubOccupancy(
   });
 }
 
-type ChargeRow = FakeRow<typeof columnConfigs.occCharge>;
+type ChargeRow = FakeBodyRow<keyof typeof columnConfigs.occCharge>;
 
 const chargeRows: ChargeRow[] = [
   {
@@ -155,9 +117,10 @@ const chargeRows: ChargeRow[] = [
 ];
 
 function stubOccCharge(dataRows: ChargeRow[] = chargeRows) {
-  return stubSheet({
-    sheetName: "occCharge",
-    config: columnConfigs.occCharge,
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.occCharge.sheetGid,
+    title: "occCharge",
+    columnConfigs: columnConfigs.occCharge,
     columnNames: [
       "id",
       "occupancyId",
@@ -166,17 +129,18 @@ function stubOccCharge(dataRows: ChargeRow[] = chargeRows) {
       "amount",
       "notes",
     ],
-    dataRows,
+    bodyRows: dataRows,
   });
 }
 
 // The third reduces a charge of the neighbour's; the fourth is the sheet's blank row.
 function stubOccChargeReduce() {
-  return stubSheet({
-    sheetName: "occChargeReduce",
-    config: columnConfigs.occChargeReduce,
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.occChargeReduce.sheetGid,
+    title: "occChargeReduce",
+    columnConfigs: columnConfigs.occChargeReduce,
     columnNames: ["chargeId", "date", "description", "amount"],
-    dataRows: [
+    bodyRows: [
       {
         chargeId: damageCharge,
         date: dayThree,
@@ -200,7 +164,7 @@ function stubOccChargeReduce() {
   });
 }
 
-type AllocationRow = FakeRow<typeof columnConfigs.occPayAllocation>;
+type AllocationRow = FakeBodyRow<keyof typeof columnConfigs.occPayAllocation>;
 
 // The first two are one payment split across two charges; the last two must not appear.
 const allocationRows: AllocationRow[] = [
@@ -273,9 +237,10 @@ const allocationRows: AllocationRow[] = [
 ];
 
 function stubOccPayAllocation(dataRows: AllocationRow[] = allocationRows) {
-  return stubSheet({
-    sheetName: "occPayAllocation",
-    config: columnConfigs.occPayAllocation,
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.occPayAllocation.sheetGid,
+    title: "occPayAllocation",
+    columnConfigs: columnConfigs.occPayAllocation,
     columnNames: [
       "paymentId",
       "designatedOccupancyId",
@@ -287,16 +252,17 @@ function stubOccPayAllocation(dataRows: AllocationRow[] = allocationRows) {
       "amount",
       "chargeDescription",
     ],
-    dataRows,
+    bodyRows: dataRows,
   });
 }
 
 function stubVariable() {
-  return stubSheet({
-    sheetName: "variable",
-    config: columnConfigs.variable,
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.variable.sheetGid,
+    title: "variable",
+    columnConfigs: columnConfigs.variable,
     columnNames: ["occupancyLedgerOccId", "occupancyLedgerDateRan"],
-    dataRows: [
+    bodyRows: [
       { occupancyLedgerOccId: "r:occ:stale", occupancyLedgerDateRan: 44000 },
     ],
   });
@@ -315,9 +281,10 @@ function stubOccupancyLedger() {
     amountOwed: staleAmountOwed,
     notes: "",
   };
-  return stubSheet({
-    sheetName: "occupancyLedger",
-    config: columnConfigs.occupancyLedger,
+  return fakeTableSheet.build({
+    sheetId: sheetConfigs.occupancyLedger.sheetGid,
+    title: "occupancyLedger",
+    columnConfigs: columnConfigs.occupancyLedger,
     columnNames: [
       "date",
       "issuer",
@@ -327,7 +294,7 @@ function stubOccupancyLedger() {
       "amountOwed",
       "notes",
     ],
-    dataRows: [staleRow, staleRow, staleRow],
+    bodyRows: [staleRow, staleRow, staleRow],
   });
 }
 
@@ -371,10 +338,7 @@ function runBuildLedger(): void {
 }
 
 function ledgerRows(grid: FakeGridView): FakeCell[][] {
-  return grid.sheet(ledgerGid).rows({
-    startRowIndex: topDataRowIndex,
-    endColumnIndex: ledgerColumnCount,
-  });
+  return grid.sheet(ledgerGid).bodyRows({ endColumnIndex: ledgerColumnCount });
 }
 
 // Every column but amount owed, the one the build leaves to the sheet's formula.
@@ -386,16 +350,18 @@ function ledgerLines(grid: FakeGridView): FakeCell[][] {
 
 function variableRow(grid: FakeGridView): FakeCellValue[] {
   return Val.assert(
-    grid.sheet(variableGid).values({ startRowIndex: topDataRowIndex })[0],
+    grid.sheet(variableGid).bodyValues()[0],
     "the Variable sheet's data row",
   );
 }
 
 function runStatus(grid: FakeGridView, occupancyId: string): FakeCellValue {
-  return grid
-    .sheet(occupancyGid)
-    .values({ startRowIndex: topDataRowIndex, endColumnIndex: occupancyColumnNames.length })
-    .find((row) => row[0] === occupancyId)?.[runStatusColIndex] ?? null;
+  return (
+    grid
+      .sheet(occupancyGid)
+      .bodyValues({ endColumnIndex: occupancyColumnNames.length })
+      .find((row) => row[0] === occupancyId)?.[runStatusColIndex] ?? null
+  );
 }
 
 beforeEach(() => {
@@ -427,14 +393,7 @@ describe("buildLedger, the page it writes", () => {
       [dayTwo, "Household", "Caretaking", "", 25, ""],
       [dayTwo, "Ramsey County", "Payment", "", 200, ""],
       [dayThree, "Property management", "Forgiveness", -110, "", ""],
-      [
-        dayThree,
-        "Security deposit",
-        "Damage, waste, or service",
-        "",
-        110,
-        "",
-      ],
+      [dayThree, "Security deposit", "Damage, waste, or service", "", 110, ""],
     ]);
   });
 
@@ -496,8 +455,7 @@ describe("buildLedger, the page it writes", () => {
 
     const ledger = grid.sheet(ledgerGid);
     expect(ledgerRows(grid)).toHaveLength(8);
-    expect(ledger.tables[0]?.range?.endRowIndex).toBe(topDataRowIndex + 8);
-    expect(ledger.rowCount).toBe(topDataRowIndex + 8);
+    expect(ledger.rowCount).toBe(ledger.tables[0]?.range?.endRowIndex);
   });
 
   it("stamps the occupancy and the day it ran into the Variable sheet", () => {
@@ -524,7 +482,9 @@ describe("buildLedger, the page it writes", () => {
 
     runBuildLedger();
 
-    expect(variableRow(grid)[1]).toBe(SerialDate.fromYmd({ year: 2024, month: 3, day: 15 }));
+    expect(variableRow(grid)[1]).toBe(
+      SerialDate.fromYmd({ year: 2024, month: 3, day: 15 }),
+    );
   });
 
   it("reads every input sheet in one fetch cycle of its own", () => {
@@ -555,14 +515,7 @@ describe("buildLedger, the page it writes", () => {
       [dayTwo, "Household", "Caretaking", "", 25, ""],
       [dayTwo, "Ramsey County", "Payment", "", 200, ""],
       [dayThree, "Property management", "Forgiveness", -110, "", ""],
-      [
-        dayThree,
-        "Security deposit",
-        "Damage, waste, or service",
-        "",
-        110,
-        "",
-      ],
+      [dayThree, "Security deposit", "Damage, waste, or service", "", 110, ""],
     ]);
   });
 
@@ -606,14 +559,7 @@ describe("buildLedger, the page it writes", () => {
     runBuildLedger();
 
     expect(ledgerLines(grid)).toEqual([
-      [
-        dayThree + 1,
-        "Property management",
-        "Prior balance",
-        -225,
-        "",
-        "",
-      ],
+      [dayThree + 1, "Property management", "Prior balance", -225, "", ""],
     ]);
   });
 
@@ -753,9 +699,7 @@ describe("buildLedger, what it reports", () => {
 
     runBuildLedger();
 
-    expect(runStatus(grid, tenant)).toMatch(
-      /"date".*"occCharge".*row 5\./,
-    );
+    expect(runStatus(grid, tenant)).toMatch(/"date".*"occCharge".*row 5\./);
     expect(previousLedger).toHaveLength(3);
     expect(ledgerRows(grid)).toEqual(previousLedger);
   });
