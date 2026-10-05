@@ -455,7 +455,8 @@ describe("buildLedger, the page it writes", () => {
 
     const ledger = grid.sheet(ledgerGid);
     expect(ledgerRows(grid)).toHaveLength(8);
-    expect(ledger.rowCount).toBe(ledger.tables[0]?.range?.endRowIndex);
+    const tableEndRowIndex = ledger.tables[0]?.range?.endRowIndex;
+    expect(ledger.values({ startRowIndex: tableEndRowIndex })).toEqual([]);
   });
 
   it("stamps the occupancy and the day it ran into the Variable sheet", () => {
