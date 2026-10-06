@@ -329,7 +329,7 @@ function stubLedgerSpreadsheet({
 function runBuildLedger(): void {
   const run = new EndpointRun({
     ...SpreadsheetBaseNamed.initSpreadsheetNamedProps(),
-    sheetName: "occupancy",
+    tableName: "occupancy",
     entryColumnName: "buildLedgerTimeLastRan",
     endpoint: buildLedger,
   });

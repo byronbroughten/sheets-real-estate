@@ -47,7 +47,7 @@ interface RunStatusProps {
 export class OccupancyLedgerOperator extends TableBaseNamed<"occupancyLedger"> {
   constructor(props: SpreadsheetNamedProps) {
     super({
-      sheetName: "occupancyLedger",
+      tableName: "occupancyLedger",
       ...props,
     });
   }
@@ -58,7 +58,7 @@ export class OccupancyLedgerOperator extends TableBaseNamed<"occupancyLedger"> {
     return new SpreadsheetNamed(this.spreadsheetNamedProps);
   }
   get sheet(): TableNamed<"occupancyLedger"> {
-    return this.ss.sheet(this.sheetName);
+    return this.ss.sheet(this.tableName);
   }
   build(occupancyRowIndex: number): string {
     this._gatherFetchInputs(occupancyRowIndex);

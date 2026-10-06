@@ -183,7 +183,7 @@ function stubTermsSpreadsheet({
 function runUpdateTerms(): void {
   const run = new EndpointRun({
     ...SpreadsheetBaseNamed.initSpreadsheetNamedProps(),
-    sheetName: "occupancy",
+    tableName: "occupancy",
     entryColumnName: "updateTermsTimeLastRan",
     endpoint: updateTerms,
   });

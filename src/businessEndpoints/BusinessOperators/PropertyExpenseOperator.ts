@@ -56,7 +56,7 @@ interface ExpenseReport {
 export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
   constructor(props: SpreadsheetNamedProps) {
     super({
-      sheetName: "propertyExpense",
+      tableName: "propertyExpense",
       ...props,
     });
   }
@@ -67,7 +67,7 @@ export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
     return new SpreadsheetNamed(this.spreadsheetNamedProps);
   }
   get sheet(): TableNamed<"propertyExpense"> {
-    return this.ss.sheet(this.sheetName);
+    return this.ss.sheet(this.tableName);
   }
   get staging(): TableNamed<"addPropertyExpense"> {
     return this.ss.sheet("addPropertyExpense");
@@ -208,19 +208,19 @@ export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
   // A name nobody gave is no fault of the row's; what a missing one means is decided above.
   private _nameComplaints(
     match: RowIdByName | undefined,
-    sheetName: NamedSheetName,
+    tableName: NamedSheetName,
     name: string,
   ): string[] {
     if (!match || match.found === "one") return [];
-    return [this._unresolved(match, sheetName, name)];
+    return [this._unresolved(match, tableName, name)];
   }
   // The live sheet title, not its config name: the operator reads this cell.
   private _unresolved(
     match: NameUnresolved,
-    sheetName: NamedSheetName,
+    tableName: NamedSheetName,
     name: string,
   ): string {
-    const title = this.ss.sheet(sheetName).raw.title;
+    const title = this.ss.sheet(tableName).raw.title;
     if (match.found === "many") {
       return `${match.rowCount} rows of ${title} are named "${name}"`;
     }

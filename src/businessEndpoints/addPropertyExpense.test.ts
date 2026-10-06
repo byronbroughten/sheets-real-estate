@@ -194,7 +194,7 @@ function stubExpenseSpreadsheet({
 function runAddPropertyExpense(): void {
   const run = new EndpointRun({
     ...SpreadsheetBaseNamed.initSpreadsheetNamedProps(),
-    sheetName: "addPropertyExpense",
+    tableName: "addPropertyExpense",
     entryColumnName: "runStatus",
     endpoint: addPropertyExpense,
   });
