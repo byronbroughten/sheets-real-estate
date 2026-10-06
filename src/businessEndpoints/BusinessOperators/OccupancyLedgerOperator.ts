@@ -57,12 +57,12 @@ export class OccupancyLedgerOperator extends TableBaseNamed<"occupancyLedger"> {
   get ss(): SpreadsheetNamed {
     return new SpreadsheetNamed(this.spreadsheetNamedProps);
   }
-  get sheet(): TableNamed<"occupancyLedger"> {
-    return this.ss.sheet(this.tableName);
+  get table(): TableNamed<"occupancyLedger"> {
+    return this.ss.table(this.tableName);
   }
   build(occupancyRowIndex: number): string {
     this._gatherFetchInputs(occupancyRowIndex);
-    const occupancyRow = this.ss.sheet("occupancy").row(occupancyRowIndex);
+    const occupancyRow = this.ss.table("occupancy").row(occupancyRowIndex);
     const occupancyId = occupancyRow.value("id");
     const startDate = occupancyRow.value("buildLedgerStartDate");
     this._updateLetterhead(occupancyId);
@@ -81,13 +81,13 @@ export class OccupancyLedgerOperator extends TableBaseNamed<"occupancyLedger"> {
   }
   private _gatherFetchInputs(occupancyRowIndex: number): void {
     const { ss } = this;
-    ss.sheet("occupancy").prepFetchColumnsSpecific(
+    ss.table("occupancy").prepFetchColumnsSpecific(
       [occupancyRowIndex],
       "id",
       "name",
       "buildLedgerStartDate",
     );
-    ss.sheet("occCharge").prepFetchColumnsFull(
+    ss.table("occCharge").prepFetchColumnsFull(
       "id",
       "occupancyId",
       "date",
@@ -95,13 +95,13 @@ export class OccupancyLedgerOperator extends TableBaseNamed<"occupancyLedger"> {
       "amount",
       "notes",
     );
-    ss.sheet("occChargeReduce").prepFetchColumnsFull(
+    ss.table("occChargeReduce").prepFetchColumnsFull(
       "chargeId",
       "date",
       "description",
       "amount",
     );
-    ss.sheet("occPayAllocation").prepFetchColumnsFull(
+    ss.table("occPayAllocation").prepFetchColumnsFull(
       "paymentId",
       "designatedOccupancyId",
       "filledOut",
@@ -112,11 +112,11 @@ export class OccupancyLedgerOperator extends TableBaseNamed<"occupancyLedger"> {
       "amount",
       "chargeDescription",
     );
-    ss.sheet("variable").prepFetchColumnsFull(
+    ss.table("variable").prepFetchColumnsFull(
       "occupancyLedgerOccId",
       "occupancyLedgerDateRan",
     );
-    this.sheet.prepFetchColumnsFull(
+    this.table.prepFetchColumnsFull(
       "date",
       "issuer",
       "description",
@@ -128,22 +128,22 @@ export class OccupancyLedgerOperator extends TableBaseNamed<"occupancyLedger"> {
   }
   // The two cells the ledger's letterhead formulas read.
   private _updateLetterhead(occupancyId: string): void {
-    this.ss.sheet("variable").topRow.updateValues({
+    this.ss.table("variable").topRow.updateValues({
       occupancyLedgerOccId: occupancyId,
       occupancyLedgerDateRan: this.ss.today(),
     });
   }
   private _chargeLines(occupancyId: string): LedgerLine[] {
     return this.ss
-      .sheet("occCharge")
+      .table("occCharge")
       .rowsFiltered({ occupancyId })
       .map(chargeLine);
   }
   private _reductionLines(occupancyId: string): LedgerLine[] {
-    const sheet = this.ss.sheet("occChargeReduce");
+    const table = this.ss.table("occChargeReduce");
     const chargesById = this._chargesById();
-    return sheet.rowIndexesActiveWithData.flatMap((rowIndex) => {
-      const reduction = sheet.row(rowIndex);
+    return table.rowIndexesActiveWithData.flatMap((rowIndex) => {
+      const reduction = table.row(rowIndex);
       const charge = chargesById.get(reduction.value("chargeId"));
       // A reduction of another occupancy's charge belongs on another ledger.
       if (charge?.valueOrEmpty("occupancyId") !== occupancyId) return [];
@@ -152,16 +152,16 @@ export class OccupancyLedgerOperator extends TableBaseNamed<"occupancyLedger"> {
   }
   // Blank-tolerant, so a half-filled charge on another occupancy can't fail this build.
   private _chargesById(): Map<string, RowNamed<"occCharge">> {
-    const sheet = this.ss.sheet("occCharge");
-    return sheet.rowIndexesActiveWithData.reduce((byId, rowIndex) => {
-      const charge = sheet.row(rowIndex);
+    const table = this.ss.table("occCharge");
+    return table.rowIndexesActiveWithData.reduce((byId, rowIndex) => {
+      const charge = table.row(rowIndex);
       byId.set(charge.valueOrEmpty("id"), charge);
       return byId;
     }, new Map<string, RowNamed<"occCharge">>());
   }
   private _paymentLines(occupancyId: string): LedgerLine[] {
     const allocations = this.ss
-      .sheet("occPayAllocation")
+      .table("occPayAllocation")
       .rowsFiltered({ designatedOccupancyId: occupancyId, filledOut: true });
     return paymentsFromAllocations(allocations).map((payment) => ({
       kind: "payment",
@@ -174,10 +174,10 @@ export class OccupancyLedgerOperator extends TableBaseNamed<"occupancyLedger"> {
     }));
   }
   private _rebuildPage(lines: LedgerLine[]): void {
-    const { sheet } = this;
-    sheet.DELETE_ALL_DATA_ROWS();
+    const { table } = this;
+    table.DELETE_ALL_DATA_ROWS();
     lines.forEach((line) => {
-      sheet.appendRowWithAllVals({
+      table.appendRowWithAllVals({
         date: line.date,
         issuer: line.issuer,
         description: line.description,

@@ -5,7 +5,7 @@ export const updateTerms: Endpoint<"occupancy"> = {
   runStatus: "updateTermsRunStatus",
   selector: { column: "updateTermsSelect" },
   action: (ss, { selectedRowIndexes }) => {
-    ss.sheet("occupancy").prepFetchColumnsSpecific(
+    ss.table("occupancy").prepFetchColumnsSpecific(
       selectedRowIndexes,
       "id",
       "latestOccupancyTermsId",
@@ -28,14 +28,14 @@ export const updateTerms: Endpoint<"occupancy"> = {
       "nextTrashCollection",
       "nextTermsNotes",
     );
-    ss.sheet("occupancyTerms").prepFetchColumnsFull(
+    ss.table("occupancyTerms").prepFetchColumnsFull(
       "id",
       "startDate",
       "endDate",
     );
     ss.fetchAllPrepped();
-    const occupancy = ss.sheet("occupancy");
-    const occupancyTerms = ss.sheet("occupancyTerms");
+    const occupancy = ss.table("occupancy");
+    const occupancyTerms = ss.table("occupancyTerms");
     selectedRowIndexes.forEach((rowIndex) => {
       const occRow = occupancy.row(rowIndex);
       const nextStartDate = occRow.value("nextTermsStartDate");

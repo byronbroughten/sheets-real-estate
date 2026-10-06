@@ -187,7 +187,7 @@ function runUpdateTerms(): void {
     entryColumnName: "updateTermsTimeLastRan",
     endpoint: updateTerms,
   });
-  run.sheet.identified.meta.ensureColumnIdsAreFetched();
+  run.table.identified.meta.ensureColumnIdsAreFetched();
   run.run(true);
 }
 

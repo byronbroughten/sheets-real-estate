@@ -66,11 +66,11 @@ export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
   get ss(): SpreadsheetNamed {
     return new SpreadsheetNamed(this.spreadsheetNamedProps);
   }
-  get sheet(): TableNamed<"propertyExpense"> {
-    return this.ss.sheet(this.tableName);
+  get table(): TableNamed<"propertyExpense"> {
+    return this.ss.table(this.tableName);
   }
   get staging(): TableNamed<"addPropertyExpense"> {
-    return this.ss.sheet("addPropertyExpense");
+    return this.ss.table("addPropertyExpense");
   }
   add(stagingRowIndexes: number[]): ActionReturn {
     this._gatherFetchInputs();
@@ -96,12 +96,12 @@ export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
   private _gatherFetchInputs(): void {
     const { ss } = this;
     this.staging.prepFetchColumnsFull(...typedColumns);
-    ss.sheet("unit").prepFetchRowIdAndName();
-    ss.sheet("unit").prepFetchColumnsFull("propertyId");
-    ss.sheet("property").prepFetchRowIdAndName();
-    ss.sheet("splitReceipt").prepFetchRowIdAndName();
+    ss.table("unit").prepFetchRowIdAndName();
+    ss.table("unit").prepFetchColumnsFull("propertyId");
+    ss.table("property").prepFetchRowIdAndName();
+    ss.table("splitReceipt").prepFetchRowIdAndName();
     // The append needs this sheet's column ids and table bounds, which only a prepped read brings.
-    this.sheet.prepFetchColumnsFull("id");
+    this.table.prepFetchColumnsFull("id");
     ss.fetchAllPrepped();
   }
   // The blank row a clean run leaves behind is a row the operator has yet to fill in.
@@ -120,7 +120,7 @@ export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
       ...splitReceipt.complaints,
     ];
     if (complaints.length > 0) return complaints;
-    this.sheet.appendRowWithAllVals({
+    this.table.appendRowWithAllVals({
       propertyId: place.propertyId,
       unitId: place.unitId,
       splitReceiptId: splitReceipt.splitReceiptId,
@@ -147,7 +147,7 @@ export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
     if (propertyName === "") {
       return emptyPlace(["name a unit or a property"]);
     }
-    const property = this.ss.sheet("property").rowIdByName(propertyName);
+    const property = this.ss.table("property").rowIdByName(propertyName);
     if (property.found !== "one") {
       return emptyPlace(
         this._nameComplaints(property, "property", propertyName),
@@ -164,7 +164,7 @@ export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
       "property",
       propertyName,
     );
-    const unit = this.ss.sheet("unit").rowIdByName(unitName);
+    const unit = this.ss.table("unit").rowIdByName(unitName);
     if (unit.found !== "one") {
       return emptyPlace([
         ...this._nameComplaints(unit, "unit", unitName),
@@ -172,7 +172,7 @@ export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
       ]);
     }
     const propertyId = this.ss
-      .sheet("unit")
+      .table("unit")
       .row(unit.rowIndex)
       .value("propertyId");
     const place = { propertyId, unitId: unit.rowId };
@@ -191,12 +191,12 @@ export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
   }
   private _propertyMatch(propertyName: string): RowIdByName | undefined {
     if (propertyName === "") return undefined;
-    return this.ss.sheet("property").rowIdByName(propertyName);
+    return this.ss.table("property").rowIdByName(propertyName);
   }
   private _splitReceipt(stagingRow: StagingRow): SplitReceiptRef {
     const name = stagingRow.value("splitReceiptName");
     if (name === "") return { splitReceiptId: "", complaints: [] };
-    const receipt = this.ss.sheet("splitReceipt").rowIdByName(name);
+    const receipt = this.ss.table("splitReceipt").rowIdByName(name);
     if (receipt.found !== "one") {
       return {
         splitReceiptId: "",
@@ -220,7 +220,7 @@ export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
     tableName: NamedSheetName,
     name: string,
   ): string {
-    const title = this.ss.sheet(tableName).raw.title;
+    const title = this.ss.table(tableName).raw.title;
     if (match.found === "many") {
       return `${match.rowCount} rows of ${title} are named "${name}"`;
     }
