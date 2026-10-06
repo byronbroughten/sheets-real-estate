@@ -4,10 +4,10 @@ import {
   type RowNamed,
   type RowReports,
   type RunReport,
-  SheetBaseNamed,
-  type SheetNamed,
   SpreadsheetNamed,
   type SpreadsheetNamedProps,
+  TableBaseNamed,
+  type TableNamed,
 } from "@byronbroughten/sheets-framework";
 
 type StagingRow = RowNamed<"addPropertyExpense">;
@@ -53,7 +53,7 @@ interface ExpenseReport {
   refusals: RowReports;
 }
 
-export class PropertyExpenseOperator extends SheetBaseNamed<"propertyExpense"> {
+export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
   constructor(props: SpreadsheetNamedProps) {
     super({
       sheetName: "propertyExpense",
@@ -66,10 +66,10 @@ export class PropertyExpenseOperator extends SheetBaseNamed<"propertyExpense"> {
   get ss(): SpreadsheetNamed {
     return new SpreadsheetNamed(this.spreadsheetNamedProps);
   }
-  get sheet(): SheetNamed<"propertyExpense"> {
+  get sheet(): TableNamed<"propertyExpense"> {
     return this.ss.sheet(this.sheetName);
   }
-  get staging(): SheetNamed<"addPropertyExpense"> {
+  get staging(): TableNamed<"addPropertyExpense"> {
     return this.ss.sheet("addPropertyExpense");
   }
   add(stagingRowIndexes: number[]): ActionReturn {

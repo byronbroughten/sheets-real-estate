@@ -1,10 +1,10 @@
 import {
   type RowNamed,
   SerialDate,
-  SheetBaseNamed,
-  type SheetNamed,
   SpreadsheetNamed,
   type SpreadsheetNamedProps,
+  TableBaseNamed,
+  type TableNamed,
 } from "@byronbroughten/sheets-framework";
 
 const issuers = {
@@ -44,7 +44,7 @@ interface RunStatusProps {
   startDate: SerialDate | "";
 }
 
-export class OccupancyLedgerOperator extends SheetBaseNamed<"occupancyLedger"> {
+export class OccupancyLedgerOperator extends TableBaseNamed<"occupancyLedger"> {
   constructor(props: SpreadsheetNamedProps) {
     super({
       sheetName: "occupancyLedger",
@@ -57,7 +57,7 @@ export class OccupancyLedgerOperator extends SheetBaseNamed<"occupancyLedger"> {
   get ss(): SpreadsheetNamed {
     return new SpreadsheetNamed(this.spreadsheetNamedProps);
   }
-  get sheet(): SheetNamed<"occupancyLedger"> {
+  get sheet(): TableNamed<"occupancyLedger"> {
     return this.ss.sheet(this.sheetName);
   }
   build(occupancyRowIndex: number): string {
