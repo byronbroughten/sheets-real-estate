@@ -15,11 +15,11 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { appConfigs } from "../generated/appConfigs";
 import { addPropertyExpense } from "./addPropertyExpense";
 
-const { sheetConfigs, columnConfigs } = appConfigs;
+const { tableConfigs, columnConfigs } = appConfigs;
 
-const stagingGid = sheetConfigs.addPropertyExpense.sheetGid;
-const expenseGid = sheetConfigs.propertyExpense.sheetGid;
-const receiptGid = sheetConfigs.splitReceipt.sheetGid;
+const stagingGid = tableConfigs.addPropertyExpense.sheetGid;
+const expenseGid = tableConfigs.propertyExpense.sheetGid;
+const receiptGid = tableConfigs.splitReceipt.sheetGid;
 
 const caseProperty = "r:prp:case";
 const caseName = "140 Case";
@@ -99,7 +99,7 @@ function typedRow(overrides: StagingRow = {}): StagingRow {
 
 function stubStaging(dataRows: readonly StagingRow[]): FakeSheetProperties {
   return fakeTableSheet.build({
-    sheetId: sheetConfigs.addPropertyExpense.sheetGid,
+    sheetId: tableConfigs.addPropertyExpense.sheetGid,
     title: "addPropertyExpense",
     columnConfigs: columnConfigs.addPropertyExpense,
     columnNames: stagingColumnNames,
@@ -111,9 +111,10 @@ function stubProperty(
   dataRows?: readonly FakeBodyRow<keyof typeof columnConfigs.property>[],
 ) {
   return fakeTableSheet.build({
-    sheetId: sheetConfigs.property.sheetGid,
-    // The title, not the config name, is what a refusal message quotes.
+    sheetId: tableConfigs.property.sheetGid,
     title: "Property",
+    // The live Table name, not the title, is what a refusal message quotes.
+    name: tableConfigs.property.tableName,
     columnConfigs: columnConfigs.property,
     columnNames: ["name", "id"],
     bodyRows: dataRows ?? [
@@ -125,8 +126,9 @@ function stubProperty(
 
 function stubUnit() {
   return fakeTableSheet.build({
-    sheetId: sheetConfigs.unit.sheetGid,
+    sheetId: tableConfigs.unit.sheetGid,
     title: "Unit",
+    name: tableConfigs.unit.tableName,
     columnConfigs: columnConfigs.unit,
     columnNames: ["name", "id", "propertyId"],
     bodyRows: [
@@ -139,7 +141,7 @@ function stubUnit() {
 // The second receipt has no id yet, which the run is expected to mint.
 function stubSplitReceipt() {
   return fakeTableSheet.build({
-    sheetId: sheetConfigs.splitReceipt.sheetGid,
+    sheetId: tableConfigs.splitReceipt.sheetGid,
     title: "Split Receipt",
     columnConfigs: columnConfigs.splitReceipt,
     columnNames: ["name", "id"],
@@ -155,7 +157,7 @@ const previousExpenseCount = 2;
 // Two rows, so an append can never collapse into a blank-row reuse.
 function stubPropertyExpense() {
   return fakeTableSheet.build({
-    sheetId: sheetConfigs.propertyExpense.sheetGid,
+    sheetId: tableConfigs.propertyExpense.sheetGid,
     title: "propertyExpense",
     columnConfigs: columnConfigs.propertyExpense,
     columnNames: expenseColumnNames,
@@ -194,11 +196,11 @@ function stubExpenseSpreadsheet({
 function runAddPropertyExpense(): void {
   const run = new EndpointRun({
     ...SpreadsheetBaseNamed.initSpreadsheetNamedProps(),
-    sheetName: "addPropertyExpense",
+    tableName: "addPropertyExpense",
     entryColumnName: "runStatus",
     endpoint: addPropertyExpense,
   });
-  run.sheet.identified.meta.ensureColumnIdsAreFetched();
+  run.table.identified.ensureColumnIdsAreFetched();
   run.run(true);
 }
 
@@ -297,7 +299,7 @@ describe("addPropertyExpense, a mixed batch", () => {
     runAddPropertyExpense();
 
     expect(rowMessages(grid)).toEqual([
-      'This row was not added: no row of Unit is named "140 Case, Unit 9".',
+      'This row was not added: no row of unit is named "140 Case, Unit 9".',
       "This row was not added: Amount is blank.",
     ]);
   });
@@ -408,7 +410,7 @@ describe("addPropertyExpense, naming the property and the unit", () => {
     runAddPropertyExpense();
 
     expect(rowMessages(grid)[0]).toBe(
-      'This row was not added: 2 rows of Property are named "140 Case".',
+      'This row was not added: 2 rows of property are named "140 Case".',
     );
   });
 
@@ -422,7 +424,7 @@ describe("addPropertyExpense, naming the property and the unit", () => {
     runAddPropertyExpense();
 
     expect(rowMessages(grid)[0]).toBe(
-      'This row was not added: no row of Unit is named "140 Case, Unit 9"; no row of Property is named "9 Nowhere".',
+      'This row was not added: no row of unit is named "140 Case, Unit 9"; no row of property is named "9 Nowhere".',
     );
   });
 

@@ -18,11 +18,11 @@ import { Val } from "../appUtils/Val";
 import { appConfigs } from "../generated/appConfigs";
 import { buildLedger } from "./buildLedger";
 
-const { sheetConfigs, columnConfigs } = appConfigs;
+const { tableConfigs, columnConfigs } = appConfigs;
 
-const ledgerGid = sheetConfigs.occupancyLedger.sheetGid;
-const variableGid = sheetConfigs.variable.sheetGid;
-const occupancyGid = sheetConfigs.occupancy.sheetGid;
+const ledgerGid = tableConfigs.occupancyLedger.sheetGid;
+const variableGid = tableConfigs.variable.sheetGid;
+const occupancyGid = tableConfigs.occupancy.sheetGid;
 const occupancyColumnNames = [
   "id",
   "name",
@@ -55,7 +55,7 @@ function stubOccupancy(
   startDates: Partial<Record<string, number>> = {},
 ) {
   return fakeTableSheet.build({
-    sheetId: sheetConfigs.occupancy.sheetGid,
+    sheetId: tableConfigs.occupancy.sheetGid,
     title: "occupancy",
     columnConfigs: columnConfigs.occupancy,
     columnNames: occupancyColumnNames,
@@ -118,7 +118,7 @@ const chargeRows: ChargeRow[] = [
 
 function stubOccCharge(dataRows: ChargeRow[] = chargeRows) {
   return fakeTableSheet.build({
-    sheetId: sheetConfigs.occCharge.sheetGid,
+    sheetId: tableConfigs.occCharge.sheetGid,
     title: "occCharge",
     columnConfigs: columnConfigs.occCharge,
     columnNames: [
@@ -136,7 +136,7 @@ function stubOccCharge(dataRows: ChargeRow[] = chargeRows) {
 // The third reduces a charge of the neighbour's; the fourth is the sheet's blank row.
 function stubOccChargeReduce() {
   return fakeTableSheet.build({
-    sheetId: sheetConfigs.occChargeReduce.sheetGid,
+    sheetId: tableConfigs.occChargeReduce.sheetGid,
     title: "occChargeReduce",
     columnConfigs: columnConfigs.occChargeReduce,
     columnNames: ["chargeId", "date", "description", "amount"],
@@ -238,7 +238,7 @@ const allocationRows: AllocationRow[] = [
 
 function stubOccPayAllocation(dataRows: AllocationRow[] = allocationRows) {
   return fakeTableSheet.build({
-    sheetId: sheetConfigs.occPayAllocation.sheetGid,
+    sheetId: tableConfigs.occPayAllocation.sheetGid,
     title: "occPayAllocation",
     columnConfigs: columnConfigs.occPayAllocation,
     columnNames: [
@@ -258,7 +258,7 @@ function stubOccPayAllocation(dataRows: AllocationRow[] = allocationRows) {
 
 function stubVariable() {
   return fakeTableSheet.build({
-    sheetId: sheetConfigs.variable.sheetGid,
+    sheetId: tableConfigs.variable.sheetGid,
     title: "variable",
     columnConfigs: columnConfigs.variable,
     columnNames: ["occupancyLedgerOccId", "occupancyLedgerDateRan"],
@@ -282,7 +282,7 @@ function stubOccupancyLedger() {
     notes: "",
   };
   return fakeTableSheet.build({
-    sheetId: sheetConfigs.occupancyLedger.sheetGid,
+    sheetId: tableConfigs.occupancyLedger.sheetGid,
     title: "occupancyLedger",
     columnConfigs: columnConfigs.occupancyLedger,
     columnNames: [
@@ -329,11 +329,11 @@ function stubLedgerSpreadsheet({
 function runBuildLedger(): void {
   const run = new EndpointRun({
     ...SpreadsheetBaseNamed.initSpreadsheetNamedProps(),
-    sheetName: "occupancy",
+    tableName: "occupancy",
     entryColumnName: "buildLedgerTimeLastRan",
     endpoint: buildLedger,
   });
-  run.sheet.identified.meta.ensureColumnIdsAreFetched();
+  run.table.identified.ensureColumnIdsAreFetched();
   run.run(true);
 }
 
