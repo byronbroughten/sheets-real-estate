@@ -44,9 +44,9 @@ export const columnConfigs = makeColumnConfigs({
     "isUpfrontInvestment": { "columnId": "c:ape:drjacxj", "header": "Is upfront investment", "valueName": "checkbox", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
   },
   "columnConfig": {
-    "sheetGid": { "columnId": "c:ccf:1-6AQIj", "header": "Sheet GID", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "tableId": { "columnId": "c:ccf:tableId", "header": "Table ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "columnId": { "columnId": "c:ccf:vj9_rre", "header": "Column ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "sheetTitle": { "columnId": "c:ccf:949GjdB", "header": "Sheet title", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "tableName": { "columnId": "c:ccf:tableName", "header": "Table name", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "header": { "columnId": "c:ccf:kqA31oK", "header": "Header", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "customDefaultValue": { "columnId": "c:ccf:1msMno3", "header": "Custom default value", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "emptyValueAllowed": { "columnId": "c:ccf:volkLl6", "header": "Empty value allowed", "valueName": "checkbox", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
@@ -406,11 +406,6 @@ export const columnConfigs = makeColumnConfigs({
     "notes": { "columnId": "c:pex:MhdHdwr", "header": "Notes", "valueName": "string", "isFormula": false, "emptyValueAllowed": true, "customDefaultValue": null },
     "splitReceiptId": { "columnId": "c:pex:Iw7ytdB", "header": "Split receipt ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": true, "customDefaultValue": null }
   },
-  "sheetConfig": {
-    "sheetGid": { "columnId": "c:scf:WgnoW8d", "header": "Sheet GID", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "sheetTitle": { "columnId": "c:scf:0Ctj9xZ", "header": "Sheet title", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
-    "letApiAccess": { "columnId": "c:scf:GOJ0ixi", "header": "Let api access", "valueName": "checkbox", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
-  },
   "splitReceipt": {
     "name": { "columnId": "c:srct:CHhpNpt", "header": "Name", "valueName": "string", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "id": { "columnId": "c:srct:zrdUEcC", "header": "ID", "valueName": "id", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
@@ -765,5 +760,11 @@ export const columnConfigs = makeColumnConfigs({
     "amount": { "columnId": "c:aopi:DQC5ua_", "header": "Amount", "valueName": "number", "isFormula": true, "emptyValueAllowed": false, "customDefaultValue": null },
     "allocateWhat": { "columnId": "c:aopi:YtjlNha", "header": "Allocate what", "valueName": "paymentAllocateWhat", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
     "lesserAmount": { "columnId": "c:aopi:pW4h4vj", "header": "Lesser amount", "valueName": "number", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
+  },
+  "tableConfig": {
+    "tableId": { "columnId": "c:scf:tableId", "header": "Table ID", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "tableName": { "columnId": "c:scf:tableName", "header": "Table name", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "sheetTitle": { "columnId": "c:scf:0Ctj9xZ", "header": "Sheet title", "valueName": "string", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null },
+    "letApiAccess": { "columnId": "c:scf:GOJ0ixi", "header": "Let api access", "valueName": "checkbox", "isFormula": false, "emptyValueAllowed": false, "customDefaultValue": null }
   }
 });
