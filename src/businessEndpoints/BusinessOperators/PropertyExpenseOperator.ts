@@ -12,7 +12,7 @@ import {
 
 type StagingRow = RowNamed<"addPropertyExpense">;
 type NameUnresolved = Exclude<RowIdByName, { found: "one" }>;
-type NamedSheetName = "unit" | "property" | "splitReceipt";
+type NamedTableName = "unit" | "property" | "splitReceipt";
 
 // The columns a person types into; the run status is left out so its own message can't make a row look filled in.
 const typedColumns = [
@@ -208,23 +208,23 @@ export class PropertyExpenseOperator extends TableBaseNamed<"propertyExpense"> {
   // A name nobody gave is no fault of the row's; what a missing one means is decided above.
   private _nameComplaints(
     match: RowIdByName | undefined,
-    tableName: NamedSheetName,
+    tableName: NamedTableName,
     name: string,
   ): string[] {
     if (!match || match.found === "one") return [];
     return [this._unresolved(match, tableName, name)];
   }
-  // The live sheet title, not its config name: the operator reads this cell.
+  // The live Table name, not its config key: the operator reads this cell.
   private _unresolved(
     match: NameUnresolved,
-    tableName: NamedSheetName,
+    tableName: NamedTableName,
     name: string,
   ): string {
-    const title = this.ss.table(tableName).raw.title;
+    const liveTableName = this.ss.table(tableName).raw.name;
     if (match.found === "many") {
-      return `${match.rowCount} rows of ${title} are named "${name}"`;
+      return `${match.rowCount} rows of ${liveTableName} are named "${name}"`;
     }
-    return `no row of ${title} is named "${name}"`;
+    return `no row of ${liveTableName} is named "${name}"`;
   }
 }
 

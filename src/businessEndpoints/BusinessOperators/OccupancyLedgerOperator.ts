@@ -142,7 +142,7 @@ export class OccupancyLedgerOperator extends TableBaseNamed<"occupancyLedger"> {
   private _reductionLines(occupancyId: string): LedgerLine[] {
     const table = this.ss.table("occChargeReduce");
     const chargesById = this._chargesById();
-    return table.rowIndexesActiveWithData.flatMap((rowIndex) => {
+    return table.workingRowIndexesWithData.flatMap((rowIndex) => {
       const reduction = table.row(rowIndex);
       const charge = chargesById.get(reduction.value("chargeId"));
       // A reduction of another occupancy's charge belongs on another ledger.
@@ -153,7 +153,7 @@ export class OccupancyLedgerOperator extends TableBaseNamed<"occupancyLedger"> {
   // Blank-tolerant, so a half-filled charge on another occupancy can't fail this build.
   private _chargesById(): Map<string, RowNamed<"occCharge">> {
     const table = this.ss.table("occCharge");
-    return table.rowIndexesActiveWithData.reduce((byId, rowIndex) => {
+    return table.workingRowIndexesWithData.reduce((byId, rowIndex) => {
       const charge = table.row(rowIndex);
       byId.set(charge.valueOrEmpty("id"), charge);
       return byId;
