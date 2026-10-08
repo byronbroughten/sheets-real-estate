@@ -27,7 +27,7 @@ export const tableConfigs = makeTableConfigs({
   "subsidyPayment": { "tableId": "1952041142", "tableName": "subsidyPayment", "sheetGid": 1105274181, "idPrefix": "spy", "headerRowIndex": 3, "startColIndex": 0, "hasIdColumn": true, "hasNameColumn": false },
   "subPayAllocation": { "tableId": "1224077950", "tableName": "subPayAllocation", "sheetGid": 186254136, "idPrefix": "spa", "headerRowIndex": 3, "startColIndex": 0, "hasIdColumn": true, "hasNameColumn": true },
   "propertyExpense": { "tableId": "1700160166", "tableName": "propertyExpense", "sheetGid": 449009036, "idPrefix": "pex", "headerRowIndex": 3, "startColIndex": 0, "hasIdColumn": true, "hasNameColumn": false },
-  "occupancyYear": { "tableId": "1583154064", "tableName": "occupancyYear", "sheetGid": 1452711715, "idPrefix": "oyr", "headerRowIndex": 3, "startColIndex": 0, "hasIdColumn": true, "hasNameColumn": true },
+  "householdYear": { "tableId": "1583154064", "tableName": "householdYear", "sheetGid": 1452711715, "idPrefix": "oyr", "headerRowIndex": 3, "startColIndex": 0, "hasIdColumn": true, "hasNameColumn": true },
   "occupancyLedger": { "tableId": "845220839", "tableName": "occupancyLedger", "sheetGid": 731807482, "idPrefix": "old", "headerRowIndex": 3, "startColIndex": 0, "hasIdColumn": false, "hasNameColumn": false },
   "variable": { "tableId": "375712845", "tableName": "variable", "sheetGid": 695651834, "idPrefix": "vrb", "headerRowIndex": 3, "startColIndex": 0, "hasIdColumn": false, "hasNameColumn": false },
   "furnace": { "tableId": "263822048", "tableName": "furnace", "sheetGid": 1237193065, "idPrefix": "frn", "headerRowIndex": 3, "startColIndex": 0, "hasIdColumn": true, "hasNameColumn": true },
