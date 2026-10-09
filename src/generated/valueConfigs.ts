@@ -1,4 +1,4 @@
-import { makeValueConfigs } from "../../../framework/src/01_SpreadsheetSchema/makeConfigs";
+import { makeValueConfigs } from "../../../framework/src/01_SpreadsheetSchema/configReaders/makeConfigs";
 
 export const valueConfigs = makeValueConfigs({
   "chargeOnetimeDescription": [
