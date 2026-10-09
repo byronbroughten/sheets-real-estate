@@ -1,4 +1,4 @@
-import { makeColumnConfigs } from "../../../framework/src/01_SpreadsheetSchema/makeConfigs";
+import { makeColumnConfigs } from "../../../framework/src/01_SpreadsheetSchema/configReaders/makeConfigs";
 
 export const columnConfigs = makeColumnConfigs({
   "addOccCharge": {
