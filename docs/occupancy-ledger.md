@@ -1,6 +1,6 @@
 # Building an occupancy ledger
 
-How the occupancy ledger is built, beyond [`CONTEXT.md`](../CONTEXT.md)'s definitions of its words. The endpoint is `src/businessEndpoints/buildLedger.ts`, behind `OccupancyLedgerOperator`.
+How the occupancy ledger is built, beyond [`GLOSSARY.md`](../GLOSSARY.md)'s definitions of its words. The endpoint is `src/businessEndpoints/buildLedger.ts`, behind `OccupancyLedgerOperator`.
 
 A build rebuilds the page from scratch for one occupancy, writes the letterhead's inputs, and never writes Amount owed or a line ID.
 

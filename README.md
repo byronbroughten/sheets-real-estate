@@ -12,7 +12,7 @@ It builds only inside an npm workspace beside the framework: it depends on `@byr
 - `src/businessEndpoints.ts` and `src/businessEndpoints/`: every endpoint, one file each, with the classes they need in `BusinessOperators/`.
 - `src/chores/`: one-off jobs against this spreadsheet.
 - `src/generated/`: the configs generated from the live spreadsheet; never hand-edited.
-- [`CONTEXT.md`](./CONTEXT.md): this app's words, after the framework's. [`docs/occupancy-ledger.md`](./docs/occupancy-ledger.md): how the occupancy ledger is built.
+- [`GLOSSARY.md`](./GLOSSARY.md): this app's words, after the framework's. [`docs/occupancy-ledger.md`](./docs/occupancy-ledger.md): how the occupancy ledger is built.
 
 ## Commands
 

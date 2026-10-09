@@ -1,6 +1,6 @@
 # Real Estate Manager
 
-**Read the framework's glossary first: [the framework's `CONTEXT.md`](https://github.com/byronbroughten/sheets-framework/blob/master/CONTEXT.md).** Its sheet layout, endpoint and column words hold here unchanged. The terms below are this app's own; where one leans on a framework term it links to it rather than redefining it.
+**Read the framework's glossary first: [the framework's `GLOSSARY.md`](https://github.com/byronbroughten/sheets-framework/blob/master/GLOSSARY.md).** Its sheet layout, endpoint and column words hold here unchanged. The terms below are this app's own; where one leans on a framework term it links to it rather than redefining it.
 
 A Google Sheets spreadsheet for managing rental properties that a person operates directly, with an Apps Script layer built on the framework reacting to their edits. The vocabulary below is the language of that operator-facing surface — what a person clicks, and what the sheet tells them back.
 
@@ -9,13 +9,13 @@ A Google Sheets spreadsheet for managing rental properties that a person operate
 ### Units
 
 **Unit standard name**:
-A unit described by building type and bedroom count, as "Duplex-2BR". It is for comparing rents between units, not for addressing one. The unit's **name** is the address, as "123 Example St, Unit 2", and sits in the unit sheet's [Name column](https://github.com/byronbroughten/sheets-framework/blob/master/CONTEXT.md#columns).
+A unit described by building type and bedroom count, as "Duplex-2BR". It is for comparing rents between units, not for addressing one. The unit's **name** is the address, as "123 Example St, Unit 2", and sits in the unit sheet's [Name column](https://github.com/byronbroughten/sheets-framework/blob/master/GLOSSARY.md#columns).
 _Avoid_: standard name, unit type
 
 ### The occupancy ledger
 
 **Occupancy ledger**:
-The one-page statement you hand a tenant about one occupancy, showing every charge they were billed, every payment that settled one, and what they still owe. It is a printed document rather than a record: nothing else in the spreadsheet points at a line of it. Making one is **building** it, which an [endpoint](https://github.com/byronbroughten/sheets-framework/blob/master/CONTEXT.md#endpoints) does. How it is built: [`docs/occupancy-ledger.md`](./docs/occupancy-ledger.md).
+The one-page statement you hand a tenant about one occupancy, showing every charge they were billed, every payment that settled one, and what they still owe. It is a printed document rather than a record: nothing else in the spreadsheet points at a line of it. Making one is **building** it, which an [endpoint](https://github.com/byronbroughten/sheets-framework/blob/master/GLOSSARY.md#endpoints) does. How it is built: [`docs/occupancy-ledger.md`](./docs/occupancy-ledger.md).
 _Avoid_: statement, invoice, tenant report
 
 **Ledger start date**:
@@ -35,7 +35,7 @@ What the household still owes as you read down the page, a running Charge minus 
 _Avoid_: balance due, outstanding, running total
 
 **Letterhead**:
-The block above the ledger's [Table header row](https://github.com/byronbroughten/sheets-framework/blob/master/CONTEXT.md#sheet-layout) naming the tenant, the address and the day the page was built.
+The block above the ledger's [Table header row](https://github.com/byronbroughten/sheets-framework/blob/master/GLOSSARY.md#sheet-layout) naming the tenant, the address and the day the page was built.
 _Avoid_: header, title block
 
 **Issuer**:
