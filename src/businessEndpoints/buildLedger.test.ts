@@ -1,7 +1,4 @@
-import {
-  SerialDate,
-  SpreadsheetBaseNamed,
-} from "@byronbroughten/sheets-framework";
+import { SpreadsheetBaseNamed } from "@byronbroughten/sheets-framework";
 import {
   EndpointRun,
   type FakeBodyRow,
@@ -12,6 +9,7 @@ import {
   stubLogger,
   stubSheetsService,
 } from "@byronbroughten/sheets-framework/testing";
+import { SerialDate } from "@byronbroughten/utils/serial-date";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { Val } from "../appUtils/Val";

@@ -12,7 +12,8 @@
     "lint:docs": "lint-docs --published ."
   },
   "dependencies": {
-    "@byronbroughten/sheets-framework": "*"
+    "@byronbroughten/sheets-framework": "*",
+    "@byronbroughten/utils": "^0.1.0"
   },
   "devDependencies": {
     "@byronbroughten/config": "^0.1.0",
