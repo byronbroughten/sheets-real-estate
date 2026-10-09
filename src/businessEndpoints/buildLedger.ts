@@ -1,6 +1,6 @@
 import type { Endpoint } from "@byronbroughten/sheets-framework";
+import { Arr } from "@byronbroughten/utils/arr";
 
-import { Arr } from "../appUtils/Arr";
 import { OccupancyLedgerOperator } from "./BusinessOperators/OccupancyLedgerOperator";
 
 export const buildLedger: Endpoint<"occupancy"> = {
