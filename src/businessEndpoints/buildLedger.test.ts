@@ -10,9 +10,9 @@ import {
   stubSheetsService,
 } from "@byronbroughten/sheets-framework/testing";
 import { SerialDate } from "@byronbroughten/utils/serial-date";
+import { Val } from "@byronbroughten/utils/val";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-import { Val } from "../appUtils/Val";
 import { appConfigs } from "../generated/appConfigs";
 import { buildLedger } from "./buildLedger";
 

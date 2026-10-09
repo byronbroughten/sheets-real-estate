@@ -1,4 +1,4 @@
-import { Val } from "./Val";
+import { Val } from "@byronbroughten/utils/val";
 // The app's own array helpers; the framework's Arr is internal.
 export const Arr = {
   firstOrThrow<V>(arr: readonly V[]): V {
