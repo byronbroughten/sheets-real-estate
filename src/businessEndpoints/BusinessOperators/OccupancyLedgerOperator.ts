@@ -1,11 +1,11 @@
 import {
   type RowNamed,
-  SerialDate,
   SpreadsheetNamed,
   type SpreadsheetNamedProps,
   TableBaseNamed,
   type TableNamed,
 } from "@byronbroughten/sheets-framework";
+import { SerialDate } from "@byronbroughten/utils/serial-date";
 
 const issuers = {
   propertyManagement: "Property management",
