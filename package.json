@@ -7,6 +7,7 @@
     "tsc": "tsc -p .",
     "chore": "sheets-framework chore",
     "gen:configs": "sheets-framework gen-configs",
+    "configs:diff": "sheets-framework configs-diff",
     "probe": "sheets-framework probe",
     "build": "rollup --config && clasp push",
     "lint:docs": "lint-docs --published ."
