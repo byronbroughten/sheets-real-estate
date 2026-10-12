@@ -1,21 +1,39 @@
 import { makeValueConfigs } from "../../../framework/src/01_SpreadsheetSchema/configReaders/makeConfigs";
 
 export const valueConfigs = makeValueConfigs({
-  "chargeOnetimeDescription": [
+  "householdName": {
+    "kind": "liveReference"
+  },
+  "listChargeOnetimeDescription": [
     "Security deposit",
     "Late fee",
     "Damage, waste, or service"
   ],
-  "paymentStatus": [
+  "occupancyName": {
+    "kind": "liveReference"
+  },
+  "listPaymentStatus": [
     "Verified",
     "Guaranteed"
   ],
-  "payerCategory": [
+  "listPayerCategory": [
     "Household",
     "Non-occupant",
     "Security deposit"
   ],
-  "expenseCategory": [
+  "nonOccupantPayerName": {
+    "kind": "liveReference"
+  },
+  "propertyName": {
+    "kind": "liveReference"
+  },
+  "unitName": {
+    "kind": "liveReference"
+  },
+  "billerName": {
+    "kind": "liveReference"
+  },
+  "listExpenseCategory": [
     "Repairs",
     "Supplies",
     "Cleaning & maintenance",
@@ -33,13 +51,13 @@ export const valueConfigs = makeValueConfigs({
     "Other",
     "Principal"
   ],
-  "residenceTaxAdjust": [
+  "listResidenceTaxAdjust": [
     "Minus primary space",
     "Primary residence",
     "Half primary residence",
     "Minus primary time space"
   ],
-  "receiptFormat": [
+  "listReceiptFormat": [
     "Electronic",
     "Physical",
     "Cash ledger",
@@ -51,14 +69,20 @@ export const valueConfigs = makeValueConfigs({
     "Unknown",
     "Tax return"
   ],
-  "chargeReduceDescription": [
+  "splitReceiptName": {
+    "kind": "liveReference"
+  },
+  "listChargeReduceDescription": [
     "Forgiveness"
   ],
-  "yesOrNo": [
+  "nonOccupantPayerId": {
+    "kind": "liveReference"
+  },
+  "listYesOrNo": [
     "Yes",
     "No"
   ],
-  "chargeDescription": [
+  "listChargeDescription": [
     "Base rent",
     "Utilities",
     "Pet rent",
@@ -67,18 +91,30 @@ export const valueConfigs = makeValueConfigs({
     "Late fee",
     "Damage, waste, or service"
   ],
-  "formOfPayment": [
+  "listFormOfPayment": [
     "Payment",
     "Caretaking",
     "Cash App",
     "Venmo",
     "Check"
   ],
-  "paymentAllocationDefault": [
+  "subsidyAgreementId": {
+    "kind": "liveReference"
+  },
+  "propertyId": {
+    "kind": "liveReference"
+  },
+  "furnaceId": {
+    "kind": "liveReference"
+  },
+  "householdId": {
+    "kind": "liveReference"
+  },
+  "listPaymentAllocationDefault": [
     "Earliest unaccounted charge",
     "Next or latest unaccounted charge"
   ],
-  "paymentAllocateWhat": [
+  "listPaymentAllocateWhat": [
     "Full payment",
     "Full charge",
     "Lesser amount"
