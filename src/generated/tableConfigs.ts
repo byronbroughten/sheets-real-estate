@@ -3,7 +3,7 @@ import { makeTableConfigs } from "../../../framework/src/01_SpreadsheetSchema/co
 export const tableConfigs = makeTableConfigs({
   "occPayDesignation": { "tableId": "562516831", "tableName": "occPayDesignation", "sheetGid": 967730950, "idPrefix": "opi", "hasIdColumn": true, "hasNameColumn": false },
   "addOccPaymentIntention": { "tableId": "580422023", "tableName": "addOccPaymentIntention", "sheetGid": 856968303, "idPrefix": "aopi", "hasIdColumn": false, "hasNameColumn": false },
-  "list": { "tableId": "2072821261", "tableName": "list", "sheetGid": 2119236084, "idPrefix": "vcf", "hasIdColumn": false, "hasNameColumn": false },
+  "list": { "tableId": "2072821261", "tableName": "list", "sheetGid": 2119236084, "idPrefix": "lst", "hasIdColumn": false, "hasNameColumn": false },
   "tableConfig": { "tableId": "691006646", "tableName": "tableConfig", "sheetGid": 210603630, "idPrefix": "scf", "hasIdColumn": false, "hasNameColumn": false },
   "columnConfig": { "tableId": "424602853", "tableName": "columnConfig", "sheetGid": 2034522667, "idPrefix": "ccf", "hasIdColumn": false, "hasNameColumn": false },
   "spreadsheetConfig": { "tableId": "1573175288", "tableName": "spreadsheetConfig", "sheetGid": 1967106628, "idPrefix": "sscf", "hasIdColumn": false, "hasNameColumn": false },
