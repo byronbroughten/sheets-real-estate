@@ -12,8 +12,3 @@ const app = { configs: appConfigs, endpoints: businessEndpoints };
 function triggerOnEdit(e: GoogleAppsScript.Events.SheetsOnEdit): void {
   Api.handleSheetEdit(app, e);
 }
-
-// eslint-disable-next-line @typescript-eslint/no-unused-vars -- Apps Script calls it as a global trigger
-function triggerOnChange(e: GoogleAppsScript.Events.SheetsOnChange): void {
-  Api.handleSheetChange(app, e);
-}
