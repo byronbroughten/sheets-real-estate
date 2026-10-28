@@ -3,8 +3,8 @@
 - **Real-estate logic lives only here and in `src/businessEndpoints.ts`.** The numbered tiers stay domain-free.
 - **Framework code comes only from `@byronbroughten/sheets-framework`, and in tests also from `@byronbroughten/sheets-framework/testing`**: see [`src/AGENTS.md`](../AGENTS.md).
 - **One endpoint, one file: each exports a single `Endpoint`** that `src/businessEndpoints.ts` imports and wires to its key; the registry holds no inline body.
-- **An endpoint body is module-private helpers by default; once unwieldy, a business operator in `BusinessOperators/` behind a one-line action**, as `buildLedger.ts` and `addPropertyExpense.ts` are.
-- **An operator scoped to the occupancy row is deliberately absent**: its one reader takes three plain cells.
+- **An endpoint body is module-private helpers by default; once unwieldy, a business operator in `BusinessOperators/` behind a one-line action.**
+- **An operator scoped to the occupancy row is deliberately absent.**
 - Why each layout rule holds: [`docs/endpoint-layout.md`](../../docs/endpoint-layout.md).
 - **A business Operator's public verbs come from [GLOSSARY.md](../../GLOSSARY.md).** Use the glossary's word; if it has none, raise the gap rather than invent one.
 - **An endpoint that appends into its own sheet is initiated and reports from another sheet**, or its feedback stamps rows it is still creating.
