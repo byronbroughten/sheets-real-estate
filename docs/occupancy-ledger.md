@@ -1,6 +1,6 @@
 # Building an occupancy ledger
 
-How the occupancy ledger is built, beyond [`GLOSSARY.md`](../GLOSSARY.md)'s definitions of its words, which hold the prior balance's sign, the issuers, and why a ledger line carries no identifier. The endpoint is `src/businessEndpoints/buildLedger.ts`, behind `OccupancyLedgerOperator`.
+How the occupancy ledger is built, beyond [`GLOSSARY.md`](../GLOSSARY.md)'s definitions of its words, which hold the prior balance's sign, the issuers, and that a ledger line carries no identifier because nothing points at it. The endpoint is `src/businessEndpoints/buildLedger.ts`, behind `OccupancyLedgerOperator`.
 
 ## Rebuilt from scratch, one occupancy at a time
 
@@ -20,7 +20,7 @@ Building a ledger never writes the Amount owed column. The letterhead's cells ar
 
 ## How each issuer is written
 
-A payment the household made says "Household" plainly rather than repeating the tenant's name down the page. Money taken from the deposit says "Security deposit", because a draw is real money settling a bill rather than the landlord paying it, and a **security deposit draw** is named after the charge it settled.
+A charge or a forgiveness is issued by Property management, and a payment made on the household's behalf names the payer. A payment the household made says "Household" plainly rather than repeating the tenant's name down the page. Money taken from the deposit says "Security deposit", because a draw is real money settling a bill rather than the landlord paying it, and a **security deposit draw** is named after the charge it settled.
 
 ## One line per bank transaction
 
