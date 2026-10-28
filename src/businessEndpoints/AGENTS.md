@@ -1,7 +1,7 @@
 # Rules for `src/businessEndpoints/`
 
 - **Real-estate logic lives only here and in `src/businessEndpoints.ts`.** The numbered tiers stay domain-free.
-- **Framework code comes only from `@byronbroughten/sheets-framework`, and in tests also from `@byronbroughten/sheets-framework/testing`**: see [`src/AGENTS.md`](../AGENTS.md).
+- Where framework code is imported from: [`src/AGENTS.md`](../AGENTS.md).
 - **One endpoint, one file: each exports a single `Endpoint`** that `src/businessEndpoints.ts` imports and wires to its key; the registry holds no inline body.
 - **An endpoint body is module-private helpers by default; once unwieldy, a business operator in `BusinessOperators/` behind a one-line action.**
 - **An operator scoped to the occupancy row is deliberately absent.**

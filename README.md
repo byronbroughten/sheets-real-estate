@@ -16,14 +16,7 @@ It builds only inside an npm workspace beside the framework: it depends on `@byr
 
 ## Commands
 
-Run from the root of a workspace that clones this repo into `packages/real-estate` (the `app:*` aliases live in that root's `package.json`); each names the real-estate spreadsheet with `app:`.
-
-| Command | Does |
-| --- | --- |
-| `npm run app:chore <name>` | Dry-runs a chore; `-- --send` applies it. |
-| `npm run app:gen:configs` | Regenerates `src/generated/` from the live config sheets. **It writes to the live spreadsheet.** |
-| `npm run app:probe` | One read-only Sheets request. |
-| `npm run app:build` | Bundles the app and pushes it to its Apps Script project. |
+The `app:*` commands are in the `package.json` of the workspace root that clones this repo into `packages/real-estate`, such as [byronbroughten/byro-repo](https://github.com/byronbroughten/byro-repo/blob/master/package.json).
 
 ## History
 
