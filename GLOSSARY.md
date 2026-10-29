@@ -54,10 +54,29 @@ _Avoid_: deposit deduction, withholding
 One part of a payment, naming the charge that part settled. A payment split across three charges is three allocations; the ledger shows the payment, not its allocations.
 _Avoid_: split, line item, apportionment
 
+### Rent stabilization
+
+**Base year**:
+The calendar year a unit's rent is measured from under Saint Paul's rent stabilization ordinance: 2019, or the year a unit first became a rental if that was later. A sale does not reset it, and a unit vacant or owner-occupied in its base year gets a base-year rent imputed from comparable units.
+_Avoid_: first full year, first year of operation
+
+**Current year**:
+The calendar year before a rent increase application is filed, whose income and expenses are compared against the base year's.
+_Avoid_: this year, filing year
+
+**Gross scheduled rent**:
+A unit's rent in effect on January 1 of a year, times twelve, whether or not it was collected. A base or current year's income starts from it, never from payments received.
+_Avoid_: revenue, collected rent
+
+**CPI fallback**:
+The ordinance's presumption that, without base-year expense records, a property's operating expenses grew with the Twin Cities CPI from the base year to the current year. Any one expense line can override it with evidence of its real base-year amount.
+_Avoid_: estimated expenses, expense presumption
+
 ## Same word, two meanings
 
 - **Name**: a unit's name is its address, and it lives in the framework's **Name column**. A **unit standard name** is not a name in that sense: no endpoint finds a row by it.
 - **Header**: the framework's **Table header row** is the row of column titles; the **letterhead** is the block above it. Say which; never "header" alone.
 - **Row** and **line**: a **ledger line** is one data row of the ledger's Table. Say "ledger line" for what the tenant reads and "row" only for the sheet mechanics; the **prior balance** sits in the **first data row** but is named for what it says, not where it sits.
 - **Start**: a run's **start time** is when an endpoint began; the **ledger start date** is the day the page begins. Neither stands in for the other.
+- **Base**: a unit's **base rent** is its rent before fees and utility charges; the **base year** is the year rent stabilization measures from. Say which.
 - **Operator**: the person working the spreadsheet. `OccupancyLedgerOperator` is an Operator in the architecture sense ([vocabulary](https://github.com/byronbroughten/sheets-framework/blob/master/docs/vocabulary.md)), a class, not a person.
