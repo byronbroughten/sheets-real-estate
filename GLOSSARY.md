@@ -72,6 +72,24 @@ _Avoid_: revenue, collected rent
 The ordinance's presumption that, without base-year expense records, a property's operating expenses grew with the Twin Cities CPI from the base year to the current year. Any one expense line can override it with evidence of its real base-year amount.
 _Avoid_: estimated expenses, expense presumption
 
+### Housing vouchers
+
+**Gross rent**:
+A unit's monthly base rent plus the housing authority's utility allowance for each utility its tenant pays. Units are compared on gross rent, never base rent, so one whose rent includes heat isn't measured against one whose tenant pays for it.
+_Avoid_: total rent, all-in rent
+
+**Payment standard**:
+The most gross rent a housing authority's voucher covers for a unit of a given bedroom count. A tenant whose gross rent is above it pays the excess on top of their usual share.
+_Avoid_: voucher limit, FMR
+
+**Rent reasonableness**:
+The housing authority's test that a voucher unit's proposed gross rent is no more than that of at least three comparables in the same zip code, with the same bedroom count and building type. Every rent increase for a voucher unit must pass it.
+_Avoid_: rent comparability, market check
+
+**Comparable**:
+A market-rate unit, leased or advertised, whose gross rent a voucher unit's is measured against for rent reasonableness. A unit with a voucher tenant of its own is never one.
+_Avoid_: comp listing, rent comp
+
 ## Same word, two meanings
 
 - **Name**: a unit's name is its address, and it lives in the framework's **Name column**. A **unit standard name** is not a name in that sense: no endpoint finds a row by it.
@@ -79,4 +97,5 @@ _Avoid_: estimated expenses, expense presumption
 - **Row** and **line**: a **ledger line** is one data row of the ledger's Table. Say "ledger line" for what the tenant reads and "row" only for the sheet mechanics; the **prior balance** sits in the **first data row** but is named for what it says, not where it sits.
 - **Start**: a run's **start time** is when an endpoint began; the **ledger start date** is the day the page begins. Neither stands in for the other.
 - **Base**: a unit's **base rent** is its rent before fees and utility charges; the **base year** is the year rent stabilization measures from. Say which.
+- **Gross**: **gross rent** is one month's base rent plus utility allowances, for voucher comparisons; **gross scheduled rent** is a year of January-1 rents, for rent stabilization. Neither stands in for the other.
 - **Operator**: the person working the spreadsheet. `OccupancyLedgerOperator` is an Operator in the architecture sense ([vocabulary](https://github.com/byronbroughten/sheets-framework/blob/master/docs/vocabulary.md)), a class, not a person.
