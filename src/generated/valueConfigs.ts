@@ -1,4 +1,4 @@
-import { makeValueConfigs } from "../../../framework/src/01_SpreadsheetSchema/configReaders/makeConfigs";
+import { makeValueConfigs } from "@byronbroughten/sheets-framework";
 
 export const valueConfigs = makeValueConfigs({
   "householdName": {
