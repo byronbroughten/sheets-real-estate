@@ -1,4 +1,4 @@
-import { makeTableConfigs } from "../../../framework/src/01_SpreadsheetSchema/configReaders/makeConfigs";
+import { makeTableConfigs } from "@byronbroughten/sheets-framework";
 
 export const tableConfigs = makeTableConfigs({
   "occPayDesignation": { "tableId": "562516831", "tableName": "occPayDesignation", "sheetGid": 967730950, "idPrefix": "opi", "hasIdColumn": true, "hasNameColumn": false },
