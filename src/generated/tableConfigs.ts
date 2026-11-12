@@ -34,7 +34,7 @@ export const tableConfigs = makeTableConfigs({
   "resident": { "tableId": "308921952", "tableName": "resident", "sheetGid": 1934805379, "idPrefix": "rsd", "hasIdColumn": true, "hasNameColumn": false },
   "pet": { "tableId": "394171280", "tableName": "pet", "sheetGid": 560379920, "idPrefix": "pt", "hasIdColumn": true, "hasNameColumn": true },
   "nonOccupantPayer": { "tableId": "2123360503", "tableName": "nonOccupantPayer", "sheetGid": 471889863, "idPrefix": "npy", "hasIdColumn": true, "hasNameColumn": true },
-  "biller": { "tableId": "404011376", "tableName": "biller", "sheetGid": 1536785367, "idPrefix": "bll", "hasIdColumn": true, "hasNameColumn": true },
+  "vendor": { "tableId": "404011376", "tableName": "vendor", "sheetGid": 1536785367, "idPrefix": "bll", "hasIdColumn": true, "hasNameColumn": true },
   "businessExpense": { "tableId": "1784811306", "tableName": "businessExpense", "sheetGid": 41846794, "idPrefix": "bex", "hasIdColumn": true, "hasNameColumn": false },
   "propertyYear": { "tableId": "44437649", "tableName": "propertyYear", "sheetGid": 802789198, "idPrefix": "pyr", "hasIdColumn": true, "hasNameColumn": true },
   "splitReceipt": { "tableId": "1790503997", "tableName": "splitReceipt", "sheetGid": 1231483768, "idPrefix": "srct", "hasIdColumn": true, "hasNameColumn": true }

@@ -30,7 +30,7 @@ export const valueConfigs = makeValueConfigs({
   "unitName": {
     "kind": "liveReference"
   },
-  "billerName": {
+  "vendorName": {
     "kind": "liveReference"
   },
   "listExpenseCategory": [
