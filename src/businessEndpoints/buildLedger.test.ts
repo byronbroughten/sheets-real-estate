@@ -266,7 +266,8 @@ function stubVariable() {
   });
 }
 
-const staleAmountOwed: FakeCell = { value: 1, isFormula: true };
+// The fake can't shift a cell reference, so the sheet's formula is stood in for by one without any.
+const amountOwedFormula: FakeCell = { value: "=ROW()", isFormula: true };
 
 // Three rows of a previous run's ledger, so the rebuild has something to wipe.
 function stubOccupancyLedger() {
@@ -276,7 +277,7 @@ function stubOccupancyLedger() {
     description: "Stale",
     charge: 1,
     payment: "",
-    amountOwed: staleAmountOwed,
+    amountOwed: amountOwedFormula,
     notes: "",
   };
   return fakeTableSheet.build({
@@ -429,21 +430,14 @@ describe("buildLedger, the page it writes", () => {
     ]);
   });
 
-  it("leaves the amount owed column to the sheet's own formula", () => {
+  it("leaves the amount owed column to the sheet's own formula, copied onto every line", () => {
     const { grid } = stubLedgerSpreadsheet();
 
     runBuildLedger();
 
-    expect(ledgerRows(grid).map((row) => row[amountOwedColIndex])).toEqual([
-      staleAmountOwed,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-      null,
-    ]);
+    expect(ledgerRows(grid).map((row) => row[amountOwedColIndex])).toEqual(
+      Array<FakeCell>(8).fill(amountOwedFormula),
+    );
   });
 
   it("wipes the previous ledger down to one row and refills from there", () => {

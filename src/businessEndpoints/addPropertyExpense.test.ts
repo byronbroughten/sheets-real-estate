@@ -154,6 +154,15 @@ function stubSplitReceipt() {
 
 const previousExpenseCount = 2;
 
+// The fake can't shift a cell reference, so each formula column's formula is stood in for by one without any.
+const standInFormula: FakeCell = { value: "=ROW()", isFormula: true };
+const formulaCells = {
+  expenseName: standInFormula,
+  year: standInFormula,
+  propertyYearId: standInFormula,
+  taxDeductibleAmount: standInFormula,
+};
+
 // Two rows, so an append can never collapse into a blank-row reuse.
 function stubPropertyExpense() {
   return fakeTableSheet.build({
@@ -162,8 +171,15 @@ function stubPropertyExpense() {
     columnConfigs: columnConfigs.propertyExpense,
     columnNames: expenseColumnNames,
     bodyRows: [
-      { id: "r:pex:old", propertyId: caseProperty, date: 44000, amount: 10 },
       {
+        ...formulaCells,
+        id: "r:pex:old",
+        propertyId: caseProperty,
+        date: 44000,
+        amount: 10,
+      },
+      {
+        ...formulaCells,
         id: "r:pex:older",
         propertyId: charlesProperty,
         date: 44001,
@@ -223,15 +239,22 @@ function rowsOf<N extends string>(
     );
 }
 
-// Formula columns stay empty in the fake, and the minted id is random, so both are left out.
+function rowsAdded(grid: FakeGridView): ExpenseRow[] {
+  return rowsOf(grid, expenseGid, expenseColumnNames).slice(
+    previousExpenseCount,
+  );
+}
+
+// Formula columns hold the model row's stand-in, and the minted id is random, so both are left out.
 function expensesAdded(grid: FakeGridView): Partial<ExpenseRow>[] {
-  return rowsOf(grid, expenseGid, expenseColumnNames)
-    .slice(previousExpenseCount)
-    .map(({ id: _id, ...expense }) =>
-      Object.fromEntries(
-        Object.entries(expense).filter(([, value]) => value !== null),
+  return rowsAdded(grid).map(({ id: _id, ...expense }) =>
+    Object.fromEntries(
+      Object.entries(expense).filter(
+        ([columnName, value]) =>
+          value !== null && !Object.hasOwn(formulaCells, columnName),
       ),
-    );
+    ),
+  );
 }
 
 function stagingRows(grid: FakeGridView): StagingRowValues[] {
@@ -508,6 +531,23 @@ describe("addPropertyExpense, what the sheet is left holding", () => {
     runAddPropertyExpense();
 
     expect(rowMessages(grid)).toEqual(["Added 2 expenses."]);
+  });
+
+  it("gives each added expense the formula columns' formulas", () => {
+    const { grid } = stubExpenseSpreadsheet({ stagingRows: cleanBatch });
+
+    runAddPropertyExpense();
+
+    expect(rowsAdded(grid)).toEqual(
+      cleanBatch.map(() =>
+        expect.objectContaining({
+          expenseName: "=ROW()",
+          year: "=ROW()",
+          propertyYearId: "=ROW()",
+          taxDeductibleAmount: "=ROW()",
+        }),
+      ),
+    );
   });
 
   it("says there was nothing to add when every row is blank", () => {
